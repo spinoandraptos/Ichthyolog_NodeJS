@@ -6,6 +6,7 @@ dotenv.config()
 const { Pool } = require("pg");
  
 //connection function will be exported for use by handlers
+//each time a handler makes a query to the database, a new connection is made using this function
 module.exports = {
     dbConnect: function () {
     const clientPool = new Pool({ 
