@@ -24,7 +24,7 @@ const retrieveUsers = (request, response) => {
   const addUser = (request, response) => {
     const { username, password, email } = request.body
   
-    db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', [username, password, email], 
+    db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, crypt($2, gen_salt('bf')), $3)', [username, password, email], 
     (error, results) => {
       if (error) {
         throw error

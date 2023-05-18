@@ -14,6 +14,10 @@ const jsonParser = bodyParser.json({extended: true})
 const textParser = bodyParser.text({extended: true})
 const urlencodedParser = bodyParser.urlencoded({extended: true})
 
+express_server.use(jsonParser);
+express_server.use(textParser);
+express_server.use(urlencodedParser);
+
 // start the server and specify the port number
 //port 3000 will be used unless configured differently
 const port = process.env.SERVERPORT || 3000
