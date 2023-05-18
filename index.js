@@ -26,11 +26,12 @@ const port = process.env.SERVERPORT || 3000
 const users = require('./handlers/user')
 
 //route handlers
-express_server.get('/users', users.retrieveUsers)
-express_server.get('/users/:userid', users.retrieveUserByID)
+express_server.get('/users', users.viewUsers)
+express_server.get('/users/:userid', users.viewUser)
 express_server.post('/users', users.addUser)
 express_server.put('/users/:userid', users.updateUser)
 express_server.delete('/users/:userid', users.deleteUser)
+express_server.post('/users/login', users.loginUser)
 
 //server now listens for active connections from the specified port
 express_server.listen(port, () => {
