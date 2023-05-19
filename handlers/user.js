@@ -80,14 +80,14 @@ const argon2 = require('argon2')
   }
 
   const loginUser = (request, response) => {
-    const { email, password } = request.body
+    const { email, username, password } = request.body
 
-    db.dbConnect().query('SELECT * FROM users WHERE email = $1', [email], (error, result) => {
+    db.dbConnect().query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username], (error, result) => {
       if (error) {
         throw error
       }
       if(result.rowCount == 1){
-        if (argon2.verify(result.rows[0].password, password)){
+        if (argon2.verify(password, result.rows[0].password)){
           response.status(200).send('Successful login')
         }
         else {
