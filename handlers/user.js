@@ -10,7 +10,7 @@ const argon2 = require('argon2')
     })
   }
   
-  const viewUser = (request, response) => {
+  const viewUser = async(request, response) => {
     const userid = parseInt(request.params.userid)
   
     db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
@@ -27,9 +27,10 @@ const argon2 = require('argon2')
   }
   
   
-  const addUser = (request, response) => {
+  const addUser = async(request, response) => {
     const { username, password, email } = request.body
-    const hashedPassword = argon2.hash(password);
+    const hashedPassword = await argon2.hash(password)
+    console.log(hashedPassword)
   
     db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', 
     [username, hashedPassword, email], 
@@ -41,10 +42,10 @@ const argon2 = require('argon2')
     })
   }
   
-  const updateUser = (request, response) => {
+  const updateUser = async(request, response) => {
     const userid = parseInt(request.params.userid)
     const { username, password, email } = request.body
-    const hashedPassword = argon2.hash(password);
+    const hashedPassword = await argon2.hash(password)
   
     db.dbConnect().query(
       'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
@@ -63,7 +64,7 @@ const argon2 = require('argon2')
     )
   }
   
-  const deleteUser = (request, response) => {
+  const deleteUser = async(request, response) => {
     const userid = parseInt(request.params.userid)
   
     db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, results) => {
@@ -79,15 +80,15 @@ const argon2 = require('argon2')
     })
   }
 
-  const loginUser = (request, response) => {
+  const loginUser = async(request, response) => {
     const { email, username, password } = request.body
 
-    db.dbConnect().query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username], (error, result) => {
+    db.dbConnect().query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username], async(error, result) => {
       if (error) {
         throw error
       }
       if(result.rowCount == 1){
-        if (argon2.verify(password, result.rows[0].password)){
+        if (await argon2.verify(result.rows[0].password, password)){
           response.status(200).send('Successful login')
         }
         else {
@@ -95,7 +96,7 @@ const argon2 = require('argon2')
         }
       }
       else {
-        response.status(404).send('User not found')
+        response.status(400).send('User not found')
       }
     })
   }
