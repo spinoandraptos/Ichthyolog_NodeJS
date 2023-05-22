@@ -129,26 +129,15 @@ dotenv.config()
   }
 
   const logoffUser = async(request, response) => {
-    const { email, username, password } = request.body
+    const jwt_auth = request.get('Authorisation') 
 
-    db.dbConnect().query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username], async(error, result) => {
-      if (error) {
-        throw error
-      }
-      if(result.rowCount == 1){
-        if (await argon2.verify(result.rows[0].password, password)){
-          var token = jwt.sign({username: result.rows[0].username, userid:result.rows[0].userid}, process.env.SECRETKEY, {expiresIn: "3h", algorithm: "HS256"} );
-          console.log(token)
-          response.status(200).send(token)
-        }
-        else {
-          response.status(404).send('Password Incorrect')
-        }
-      }
-      else {
-        response.status(400).send('User not found')
-      }
-    })
+    try {
+      jwt.verify(jwt_auth, proc.env.SECRETKEY, {algorithm: 'HS256'});
+      response.status(200)
+    } catch {
+      response.status(401)
+      response.send('Bad Token')
+    }
   }
   
 
@@ -159,5 +148,6 @@ dotenv.config()
     addUser,
     updateUser,
     deleteUser,
-    loginUser
+    loginUser,
+    logoffUser
   }

@@ -32,6 +32,8 @@ express_server.post('/users', users.addUser)
 express_server.put('/users/:userid', users.updateUser)
 express_server.delete('/users/:userid', users.deleteUser)
 express_server.post('/users/login', users.loginUser)
+express_server.post('/users/logout', users.logoffUser)
+
 
 //server now listens for active connections from the specified port
 express_server.listen(port, () => {
