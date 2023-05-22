@@ -132,7 +132,8 @@ dotenv.config()
     const jwt_auth = request.get('Authorisation') 
 
     try {
-      jwt.verify(jwt_auth, proc.env.SECRETKEY, {algorithm: 'HS256'});
+      var result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      console.log(result);
       response.status(200)
     } catch {
       response.status(401)
