@@ -43,7 +43,91 @@ dotenv.config()
     })
   }
   
-  const updateUser = async(request, response) => {
+  const updateUserFull = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const userid = parseInt(request.params.userid)
+    const { username, password, email } = request.body
+    const hashedPassword = await argon2.hash(password)
+
+    try {
+      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      db.dbConnect().query(
+        'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
+        [username, hashedPassword, email, userid],
+        (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(result.rowCount == 1){
+          response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token");
+    }
+  }
+
+  const updateUserUsername = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const userid = parseInt(request.params.userid)
+    const { username, password, email } = request.body
+    const hashedPassword = await argon2.hash(password)
+
+    try {
+      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      db.dbConnect().query(
+        'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
+        [username, hashedPassword, email, userid],
+        (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(result.rowCount == 1){
+          response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token");
+    }
+  }
+
+  const updateUserPassword = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const userid = parseInt(request.params.userid)
+    const { username, password, email } = request.body
+    const hashedPassword = await argon2.hash(password)
+
+    try {
+      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      db.dbConnect().query(
+        'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
+        [username, hashedPassword, email, userid],
+        (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(result.rowCount == 1){
+          response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token");
+    }
+  }
+
+  const updateUserEmail = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
     const userid = parseInt(request.params.userid)
     const { username, password, email } = request.body
@@ -132,7 +216,7 @@ dotenv.config()
   module.exports = {
     viewUser,
     addUser,
-    updateUser,
+    updateUserFull,
     deleteUser,
     loginUser,
     logoffUser

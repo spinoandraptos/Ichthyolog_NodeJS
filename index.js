@@ -28,7 +28,7 @@ const users = require('./handlers/user')
 //route handlers
 express_server.get('/user', users.viewUser)
 express_server.post('/user', users.addUser)
-express_server.put('/user', users.updateUser)
+express_server.put('/user', users.updateUserFull)
 express_server.delete('/user', users.deleteUser)
 express_server.post('/user/login', users.loginUser)
 express_server.post('/user/logout', users.logoffUser)
