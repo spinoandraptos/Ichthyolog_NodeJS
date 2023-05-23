@@ -4,22 +4,13 @@ const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 
 dotenv.config()
-
-  const viewUsers = async (request, response) => {
-    db.dbConnect().query('SELECT * FROM users ORDER BY userid ASC', (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)
-    })
-  }
   
   const viewUser = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const userid = parseInt(request.params.userid)
   
     try {
-    jwt.verify(jwt_auth, proc.env.SECRETKEY, {algorithm: 'HS256'});
+    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+    const userid = result.userid  
     db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
       if (error) {
         throw error
@@ -32,8 +23,7 @@ dotenv.config()
       }
     })
   } catch {
-    response.status(401);
-    response.send("Bad Token");
+    response.status(401).send("Bad Token");
   }
 }
   
@@ -60,7 +50,7 @@ dotenv.config()
     const hashedPassword = await argon2.hash(password)
 
     try {
-      jwt.verify(jwt_auth, proc.env.SECRETKEY, {algorithm: 'HS256'});
+      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       db.dbConnect().query(
         'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
         [username, hashedPassword, email, userid],
@@ -77,8 +67,7 @@ dotenv.config()
         }
       )
     } catch {
-      response.status(401);
-      response.send("Bad Token");
+      response.status(401).send("Bad Token");
     }
   }
   
@@ -87,7 +76,7 @@ dotenv.config()
     const userid = parseInt(request.params.userid)
 
     try {
-      jwt.verify(jwt_auth, proc.env.SECRETKEY, {algorithm: 'HS256'});
+      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, results) => {
         if (error) {
           throw error
@@ -100,8 +89,7 @@ dotenv.config()
         }
       })
     } catch {
-      response.status(401);
-      response.send("Bad Token");
+      response.status(401).send("Bad Token");
     }
   }
 
@@ -132,19 +120,16 @@ dotenv.config()
     const jwt_auth = request.get('Authorisation') 
 
     try {
-      var result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      console.log(result);
-      response.status(200)
+      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      response.status(200).send('Valid Token')
     } catch {
-      response.status(401)
-      response.send('Bad Token')
+      response.status(401).send('Bad Token')
     }
   }
   
 
   //functions to be exported
   module.exports = {
-    viewUsers,
     viewUser,
     addUser,
     updateUser,
