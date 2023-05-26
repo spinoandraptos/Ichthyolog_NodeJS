@@ -23,7 +23,7 @@ dotenv.config()
       }
     })
   } catch {
-    response.status(401).send("Bad Token");
+    response.status(401).send("Bad Token")
   }
 }
   
@@ -31,7 +31,6 @@ dotenv.config()
   const addUser = async(request, response) => {
     const { username, password, email } = request.body
     const hashedPassword = await argon2.hash(password)
-    console.log(hashedPassword)
   
     db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', 
     [username, hashedPassword, email], 
@@ -67,7 +66,7 @@ dotenv.config()
         }
       )
     } catch {
-      response.status(401).send("Bad Token");
+      response.status(401).send("Bad Token")
     }
   }
 
@@ -95,7 +94,7 @@ dotenv.config()
         }
       )
     } catch {
-      response.status(401).send("Bad Token");
+      response.status(401).send("Bad Token")
     }
   }
 
@@ -123,7 +122,7 @@ dotenv.config()
         }
       )
     } catch {
-      response.status(401).send("Bad Token");
+      response.status(401).send("Bad Token")
     }
   }
 
@@ -151,7 +150,7 @@ dotenv.config()
         }
       )
     } catch {
-      response.status(401).send("Bad Token");
+      response.status(401).send("Bad Token")
     }
   }
   
@@ -173,7 +172,7 @@ dotenv.config()
         }
       })
     } catch {
-      response.status(401).send("Bad Token");
+      response.status(401).send("Bad Token")
     }
   }
 
