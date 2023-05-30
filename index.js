@@ -22,8 +22,9 @@ express_server.use(urlencodedParser);
 //port 3000 will be used unless configured differently
 const port = process.env.SERVERPORT || 3000
 
-//export user query functions here
+//export query functions here
 const users = require('./handlers/user')
+const posts = require('./handlers/post')
 
 //route handlers
 express_server.get('/user', users.viewUser)
@@ -32,6 +33,11 @@ express_server.put('/user', users.updateUserFull)
 express_server.delete('/user', users.deleteUser)
 express_server.post('/user/login', users.loginUser)
 express_server.post('/user/logout', users.logoffUser)
+express_server.get('/posts', posts.viewAllPosts)
+express_server.get('/post', posts.viewPost)
+express_server.post('/post', posts.addPost)
+express_server.put('/post', posts.updatePost)
+express_server.delete('/post', posts.deletePost)
 
 
 //server now listens for active connections from the specified port
