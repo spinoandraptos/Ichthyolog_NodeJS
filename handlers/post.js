@@ -19,7 +19,7 @@ const viewAllPosts = async(request, response) => {
       }
     })
   }
-
+a
   const viewUserPosts = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
   
@@ -60,13 +60,14 @@ const viewAllPosts = async(request, response) => {
   
   const addPost= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { title, description, pic } = request.body
+    const { title, description, uploadtime, sightingtime, sightinglocation, pic } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-        const userid = result.userid  
-        db.dbConnect().query('INSERT INTO posts (userid, title, description, pic) VALUES ($1, $2, $3, $4)', 
-        [userid, title, description, pic], 
+        const userid = result.userid 
+        const authorname = result.username 
+        db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl) VALUES ($1, $2, $3, $4)', 
+        [userid, authorname, title, description, uploadtime, sightinglocation, sightingtime, pic], 
         (error, results) => {
         if (error) {
             throw error
