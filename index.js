@@ -24,14 +24,23 @@ const port = process.env.SERVERPORT || 3000
 
 //export user query functions here
 const users = require('./handlers/user')
+const posts = require('./handlers/post')
 
-//route handlers
+//route handlers (users)
 express_server.get('/user', users.viewUser)
 express_server.post('/user', users.addUser)
 express_server.put('/user', users.updateUserFull)
 express_server.delete('/user', users.deleteUser)
 express_server.post('/user/login', users.loginUser)
 express_server.post('/user/logout', users.logoffUser)
+
+//route handlers (posts)
+express_server.get('/post', posts.viewAllPosts)
+express_server.get('/post/user', posts.viewUserPosts)
+express_server.get('/post/:postid', posts.viewPost)
+express_server.post('/post', posts.addPost)
+express_server.put('/post', posts.updatePost)
+express_server.delete('/post', posts.deletePost)
 
 
 //server now listens for active connections from the specified port
