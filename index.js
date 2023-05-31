@@ -26,7 +26,7 @@ const port = process.env.SERVERPORT || 3000
 const users = require('./handlers/user')
 const posts = require('./handlers/post')
 
-//route handlers
+//route handlers (users)
 express_server.get('/user', users.viewUser)
 express_server.post('/user', users.addUser)
 express_server.put('/user', users.updateUserFull)
@@ -38,6 +38,14 @@ express_server.get('/post/:id', posts.viewPost)
 express_server.post('/post', posts.addPost)
 express_server.put('/post/:id', posts.updatePost)
 express_server.delete('/post/:id', posts.deletePost)
+
+//route handlers (posts)
+express_server.get('/post', posts.viewAllPosts)
+express_server.get('/post/user', posts.viewUserPosts)
+express_server.get('/post/:postid', posts.viewPost)
+express_server.post('/post', posts.addPost)
+express_server.put('/post', posts.updatePost)
+express_server.delete('/post', posts.deletePost)
 
 
 //server now listens for active connections from the specified port
