@@ -59,13 +59,14 @@ const viewUserPosts = async (request, response) => {
   
   const addPost= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { title, description, pic } = request.body
+    const { title, description, uploadTime, sightingLocation, sightingTime, imageURL } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
         const userid = result.userid  
-        db.dbConnect().query('INSERT INTO posts (userid, title, description, pic) VALUES ($1, $2, $3, $4)', 
-        [userid, title, description, pic], 
+        const authorname = result.username
+        db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
+        [userid, authorname, title, description, uploadTime, sightingLocation, sightingTime, imageURL], 
         (error, results) => {
         if (error) {
           throw error

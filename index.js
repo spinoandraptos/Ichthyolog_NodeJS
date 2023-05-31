@@ -36,7 +36,7 @@ express_server.post('/user/logout', users.logoffUser)
 
 //route handlers (posts)
 express_server.get('/posts', posts.viewAllPosts)
-express_server.get('/posts/:userid', posts.viewUserPosts)
+express_server.get('/post/user', posts.viewUserPosts)
 express_server.get('/post/:postid', posts.viewPost)
 express_server.post('/post', posts.addPost)
 express_server.put('/post', posts.updatePost)
