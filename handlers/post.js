@@ -1,5 +1,4 @@
 const db = require('../database')
-const argon2 = require('argon2')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 
@@ -19,7 +18,7 @@ const viewAllPosts = async(request, response) => {
       }
     })
   }
-a
+
   const viewUserPosts = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
   
@@ -43,7 +42,7 @@ a
   }
 
   const viewPost = async(request, response) => {
-    const postid = request.body
+    const postid = request.params.id
     db.dbConnect().query('SELECT * FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         throw error

@@ -34,10 +34,10 @@ express_server.delete('/user', users.deleteUser)
 express_server.post('/user/login', users.loginUser)
 express_server.post('/user/logout', users.logoffUser)
 express_server.get('/posts', posts.viewAllPosts)
-express_server.get('/post', posts.viewPost)
+express_server.get('/post/:id', posts.viewPost)
 express_server.post('/post', posts.addPost)
-express_server.put('/post', posts.updatePost)
-express_server.delete('/post', posts.deletePost)
+express_server.put('/post/:id', posts.updatePost)
+express_server.delete('/post/:id', posts.deletePost)
 
 
 //server now listens for active connections from the specified port
