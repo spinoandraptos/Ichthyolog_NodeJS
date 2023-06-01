@@ -65,14 +65,24 @@ const viewUserPosts = async (request, response) => {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl) VALUES ($1, $2, $3, $4, now(), $5, $6, $7)', 
-        [userid, authorname, title, description, sightingLocation, sightingTime, imageURL], 
-        (error, results) => {
-        if (error) {
-          throw error
-        }
-        response.status(201).send(`Post with title: ${title} added`)
-      })
+        db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
+          if (error) {
+            throw error
+          }
+          if(result.rowCount == 1){
+            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8)', 
+            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, result.rows[0]], 
+            (error, results) => {
+            if (error) {
+              throw error
+            }
+            response.status(201).send(`Post with title: ${title} added`)
+          })
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        })
   } catch(error) {
     console.log(error)
     response.status(401).send("Failed to add post")

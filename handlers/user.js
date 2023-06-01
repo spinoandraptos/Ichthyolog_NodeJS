@@ -29,7 +29,6 @@ dotenv.config()
 
 const viewUserbyID = async(request, response) => {
   const userid = request.params.userid
-  console.log(userid)
   db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
     if (error) {
       throw error
