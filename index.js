@@ -28,6 +28,7 @@ const posts = require('./handlers/post')
 
 //route handlers (users)
 express_server.get('/user', users.viewUser)
+express_server.get('/user/:userid', users.viewUserbyID)
 express_server.post('/user', users.addUser)
 express_server.put('/user', users.updateUserFull)
 express_server.delete('/user', users.deleteUser)

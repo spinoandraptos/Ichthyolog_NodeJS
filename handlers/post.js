@@ -42,7 +42,7 @@ const viewUserPosts = async (request, response) => {
 }
 
   const viewPost = async(request, response) => {
-    const postid = request.params.id
+    const postid = request.params.postid
     db.dbConnect().query('SELECT * FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         throw error
@@ -59,22 +59,23 @@ const viewUserPosts = async (request, response) => {
   
   const addPost= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { title, description, uploadTime, sightingLocation, sightingTime, imageURL } = request.body
+    const { title, description, sightingLocation, sightingTime, imageURL } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
-        [userid, authorname, title, description, uploadTime, sightingLocation, sightingTime, imageURL], 
+        db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl) VALUES ($1, $2, $3, $4, now(), $5, $6, $7)', 
+        [userid, authorname, title, description, sightingLocation, sightingTime, imageURL], 
         (error, results) => {
         if (error) {
           throw error
         }
         response.status(201).send(`Post with title: ${title} added`)
       })
-  } catch {
-    response.status(401).send("Bad Token")
+  } catch(error) {
+    console.log(error)
+    response.status(401).send("Failed to add post")
   }
 }
 

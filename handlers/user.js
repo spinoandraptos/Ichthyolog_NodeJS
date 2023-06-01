@@ -26,6 +26,22 @@ dotenv.config()
     response.status(401).send("Bad Token")
   }
 }
+
+const viewUserbyID = async(request, response) => {
+  const userid = request.params.userid
+  console.log(userid)
+  db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
+    if (error) {
+      throw error
+    }
+    if(result.rowCount == 1){
+    response.status(200).json(result.rows)
+    }
+    else {
+      response.status(404).send('User not found')
+    }
+  })
+} 
   
   
   const addUser = async(request, response) => {
@@ -214,6 +230,7 @@ dotenv.config()
   //functions to be exported
   module.exports = {
     viewUser,
+    viewUserbyID,
     addUser,
     updateUserFull,
     deleteUser,
