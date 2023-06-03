@@ -1,3 +1,4 @@
+const { json } = require('body-parser')
 const db = require('../database')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
@@ -70,8 +71,9 @@ const viewUserPosts = async (request, response) => {
             throw error
           }
           if(result.rowCount == 1){
+            const picture = result.rows[0].profilepic
             db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8)', 
-            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, result.rows[0]], 
+            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture], 
             (error, results) => {
             if (error) {
               throw error
