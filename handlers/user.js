@@ -57,14 +57,14 @@ const viewUserbyID = async(request, response) => {
     })
   }
   
-  const updateUserFull = async(request, response) => {
+  const updateUserProfile = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const userid = parseInt(request.params.userid)
     const { username, password, email } = request.body
     const hashedPassword = await argon2.hash(password)
 
     try {
-      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
       db.dbConnect().query(
         'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
         [username, hashedPassword, email, userid],
@@ -72,7 +72,7 @@ const viewUserbyID = async(request, response) => {
           if (error) {
             throw error
           }
-          if(result.rowCount == 1){
+          if(results.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -87,20 +87,19 @@ const viewUserbyID = async(request, response) => {
 
   const updateUserUsername = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const userid = parseInt(request.params.userid)
-    const { username, password, email } = request.body
-    const hashedPassword = await argon2.hash(password)
+    const { username } = request.body
 
     try {
-      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
       db.dbConnect().query(
-        'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
-        [username, hashedPassword, email, userid],
+        'UPDATE users SET username = $1 WHERE userid = $2',
+        [username, userid],
         (error, results) => {
           if (error) {
             throw error
           }
-          if(result.rowCount == 1){
+          if(results.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -115,20 +114,20 @@ const viewUserbyID = async(request, response) => {
 
   const updateUserPassword = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const userid = parseInt(request.params.userid)
-    const { username, password, email } = request.body
+    const { password } = request.body
     const hashedPassword = await argon2.hash(password)
 
     try {
-      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
       db.dbConnect().query(
-        'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
-        [username, hashedPassword, email, userid],
+        'UPDATE users SET password = $1 WHERE userid = $2',
+        [hashedPassword, userid],
         (error, results) => {
           if (error) {
             throw error
           }
-          if(result.rowCount == 1){
+          if(results.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -143,21 +142,250 @@ const viewUserbyID = async(request, response) => {
 
   const updateUserEmail = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const userid = parseInt(request.params.userid)
-    const { username, password, email } = request.body
-    const hashedPassword = await argon2.hash(password)
+    const { email } = request.body
 
     try {
-      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
       db.dbConnect().query(
-        'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
-        [username, hashedPassword, email, userid],
+        'UPDATE users SET email = $1 WHERE userid = $2',
+        [email, userid],
         (error, results) => {
           if (error) {
             throw error
           }
-          if(result.rowCount == 1){
+          if(results.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
+
+  const updateUserUsernamePassword = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const { username, password } = request.body
+    const hashedPassword = await argon2.hash(password)
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      db.dbConnect().query(
+        'UPDATE users SET username = $1, password = $2 WHERE userid = $3',
+        [username, hashedPassword, userid],
+        (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(results.rowCount == 1){
+          response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
+
+  const updateUserUsernameEmail = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const { username, email } = request.body
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      db.dbConnect().query(
+        'UPDATE users SET username = $1, email = $2 WHERE userid = $3',
+        [username, email, userid],
+        (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(results.rowCount == 1){
+          response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
+
+  const updateUserEmailPassword = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const { email, password } = request.body
+    const hashedPassword = await argon2.hash(password)
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      db.dbConnect().query(
+        'UPDATE users SET email = $1, password = $2 WHERE userid = $3',
+        [email, hashedPassword, userid],
+        (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(results.rowCount == 1){
+          response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
+
+  const updateUserPic = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const { profilepic } = request.body
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      db.dbConnect().query(
+        'UPDATE users SET profilepic = $1 WHERE userid = $2',
+        [profilepic, userid],
+        (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(results.rowCount == 1){
+          response.status(200).send(`User with userid: ${userid} modified`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
+
+  const updateUserLevel = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const { level } = request.body
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      db.dbConnect().query(
+        'SELECT level FROM users WHERE userid = $1', [userid], (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(results.rowCount == 1){
+            const new_level = results.rows[0].level + level
+            db.dbConnect().query(
+              'UPDATE users SET level = $1 WHERE userid = $2',
+              [new_level, userid],
+              (error, results) => {
+                if (error) {
+                  throw error
+                }
+                if(results.rowCount == 1){
+                response.status(200).send(`User with userid: ${userid} modified`)
+                }
+                else {
+                  response.status(404).send('User not found')
+                }
+              }
+            )
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
+
+  const updateUserPost = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const { post_number } = request.body
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      db.dbConnect().query(
+        'SELECT totalposts FROM users WHERE userid = $1', [userid], (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(results.rowCount == 1){
+            const new_posts = results.rows[0].totalposts + post_number
+            db.dbConnect().query(
+              'UPDATE users SET totalposts = $1 WHERE userid = $2',
+              [new_posts, userid],
+              (error, results) => {
+                if (error) {
+                  throw error
+                }
+                if(results.rowCount == 1){
+                response.status(200).send(`User with userid: ${userid} modified`)
+                }
+                else {
+                  response.status(404).send('User not found')
+                }
+              }
+            )
+          }
+          else {
+            response.status(404).send('User not found')
+          }
+        }
+      )
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
+
+  const updateUserSpecies = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const { species_number } = request.body
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      db.dbConnect().query(
+        'SELECT speciescount FROM users WHERE userid = $1', [userid], (error, results) => {
+          if (error) {
+            throw error
+          }
+          if(results.rowCount == 1){
+            const new_level = results.rows[0].speciescount + species_number
+            db.dbConnect().query(
+              'UPDATE users SET speciescount = $1 WHERE userid = $2',
+              [new_level, userid],
+              (error, results) => {
+                if (error) {
+                  throw error
+                }
+                if(results.rowCount == 1){
+                response.status(200).send(`User with userid: ${userid} modified`)
+                }
+                else {
+                  response.status(404).send('User not found')
+                }
+              }
+            )
           }
           else {
             response.status(404).send('User not found')
@@ -171,10 +399,10 @@ const viewUserbyID = async(request, response) => {
   
   const deleteUser = async(request, response) => {
     const jwt_auth = request.get('Authorisation') 
-    const userid = parseInt(request.params.userid)
 
     try {
-      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid 
       db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, results) => {
         if (error) {
           throw error
@@ -231,7 +459,17 @@ const viewUserbyID = async(request, response) => {
     viewUser,
     viewUserbyID,
     addUser,
-    updateUserFull,
+    updateUserProfile,
+    updateUserUsername,
+    updateUserEmail,
+    updateUserPassword,
+    updateUserEmailPassword,
+    updateUserUsernamePassword,
+    updateUserUsernameEmail,
+    updateUserPic,
+    updateUserLevel,
+    updateUserPost,
+    updateUserSpecies,
     deleteUser,
     loginUser,
     logoffUser
