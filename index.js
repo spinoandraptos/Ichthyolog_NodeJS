@@ -1,10 +1,16 @@
 //create an Express application
 const express = require("express")
+const cors = require('cors')
 const express_server = express()
 
 //dotenv module to help load environment variables from .env file
 const dotenv = require("dotenv")
 dotenv.config()
+
+//CORS configuration
+var corsOptions = {
+  origin: 'https://ichthyolog-nodejs.onrender.com',
+}
 
 //middleware bodyParser to help process data sent in an HTTP request body 
 //separate middlewares are created for parsing json objects, encoded url and text
@@ -14,9 +20,10 @@ const jsonParser = bodyParser.json({extended: true})
 const textParser = bodyParser.text({extended: true})
 const urlencodedParser = bodyParser.urlencoded({extended: true})
 
-express_server.use(jsonParser);
-express_server.use(textParser);
-express_server.use(urlencodedParser);
+express_server.use(jsonParser)
+express_server.use(textParser)
+express_server.use(urlencodedParser)
+express_server.use(cors())
 
 // start the server and specify the port number
 //port 3000 will be used unless configured differently
