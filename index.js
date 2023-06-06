@@ -20,7 +20,7 @@ express_server.use(urlencodedParser);
 
 // start the server and specify the port number
 //port 3000 will be used unless configured differently
-const port = process.env.SERVERPORT || 3000
+const port = process.env.PORT || 3000
 
 //export query functions here
 const users = require('./handlers/user')
