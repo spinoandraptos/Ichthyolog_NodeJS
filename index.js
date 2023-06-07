@@ -32,6 +32,7 @@ const port = process.env.PORT || 3000
 //export query functions here
 const users = require('./handlers/user')
 const posts = require('./handlers/post')
+const comments = require('./handlers/comment')
 
 //route handlers (users)
 express_server.get('/user', users.viewUser)
@@ -59,6 +60,12 @@ express_server.get('/post/:postid', posts.viewPost)
 express_server.post('/post', posts.addPost)
 express_server.put('/post', posts.updatePost)
 express_server.delete('/post', posts.deletePost)
+
+//route handlers (comments)
+express_server.get('/comments/user', comments.viewUserComments)
+express_server.get('/comments/:postid', comments.viewPostComments)
+express_server.get('/comment/:commentid', comments.viewComment)
+express_server.post('/post', comments.addComment)
 
 
 //server now listens for active connections from the specified port
