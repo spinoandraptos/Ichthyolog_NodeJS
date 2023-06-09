@@ -109,8 +109,7 @@ const viewUserComments = async (request, response) => {
           }
         })
   } catch(error) {
-    console.log(error)
-    response.status(401).send("Failed to add comment")
+    response.status(401).send(error)
   }
 }
 
