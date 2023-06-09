@@ -63,9 +63,10 @@ express_server.delete('/post', posts.deletePost)
 
 //route handlers (comments)
 express_server.get('/comments/user', comments.viewUserComments)
+express_server.get('/comment/:postid', comments.viewLatestPostComment)
 express_server.get('/comments/:postid', comments.viewPostComments)
 express_server.get('/comment/:commentid', comments.viewComment)
-express_server.post('/post', comments.addComment)
+express_server.post('/comment', comments.addComment)
 
 
 //server now listens for active connections from the specified port

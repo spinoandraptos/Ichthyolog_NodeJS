@@ -25,6 +25,25 @@ const viewUserComments = async (request, response) => {
       response.status(401).send("Bad Token")
     }
   }
+  const viewLatestPostComment = async (request, response) => {
+    const postid = request.params.postid
+  
+    try {
+      db.dbConnect().query('SELECT * FROM comments WHERE postid = $1 ORDER BY commentid DESC LIMIT 1 ', [postid], (error, result) => {
+        if (error) {
+          throw error
+        }
+        if (result.rowCount != 0) {
+          response.status(200).json(result.rows)
+        }
+        else {
+          response.status(404).send('comments not found')
+        }
+      })
+    } catch {
+      response.status(401).send("Bad Token")
+    }
+  }
 
   const viewPostComments = async (request, response) => {
     const postid = request.params.postid
@@ -64,7 +83,7 @@ const viewUserComments = async (request, response) => {
 
   const addComment= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { title, description, sightingLocation, sightingTime, imageURL } = request.body
+    const { postid, content } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
@@ -76,8 +95,8 @@ const viewUserComments = async (request, response) => {
           }
           if(result.rowCount == 1){
             const picture = result.rows[0].profilepic
-            db.dbConnect().query('INSERT INTO comments (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8)', 
-            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture], 
+            db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime) VALUES ($1, $2, $3, $4, $5, now())', 
+            [userid, postid, authorname, content, picture], 
             (error, results) => {
             if (error) {
               throw error
@@ -97,6 +116,7 @@ const viewUserComments = async (request, response) => {
 
 module.exports = {
   viewComment,
+  viewLatestPostComment,
   viewPostComments,
   viewUserComments,
   addComment
