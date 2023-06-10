@@ -101,7 +101,7 @@ const viewUserComments = async (request, response) => {
             if (error) {
               throw error
             }
-            response.status(201).send(`comment with title: ${title} added`)
+            response.status(201).send(`Comment by ${authorname} added`)
           })
           }
           else {
