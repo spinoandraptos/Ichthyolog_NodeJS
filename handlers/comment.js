@@ -123,7 +123,7 @@ const deleteComment = async (request, response) => {
       if (error) {
         throw error
       }
-      if (result.rowCount == 1) {
+      if (results.rowCount == 1) {
         response.status(200).send(`Comment with id: ${commentid} deleted`)
       }
       else {
