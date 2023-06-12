@@ -116,6 +116,7 @@ const viewUserComments = async (request, response) => {
 const deleteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
+  console.log(commentid)
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
