@@ -121,7 +121,6 @@ const deleteComment = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     db.dbConnect().query('DELETE FROM comments WHERE commentid = $1', [commentid], (error, result) => {
-      console.log(result)
       if (error) {
         throw error
       }
