@@ -127,7 +127,7 @@ const deletePost = async (request, response) => {
       if (error) {
         throw error
       }
-      if (result.rowCount == 1) {
+      if (results.rowCount == 1) {
         response.status(200).send(`Post with id ${postid} deleted`)
       }
       else {
