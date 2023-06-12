@@ -119,7 +119,7 @@ const updatePost = async (request, response) => {
 
 const deletePost = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
-  const { postid, title } = request.body
+  const postid = request.params.postid
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
@@ -128,10 +128,10 @@ const deletePost = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        response.status(200).send(`Post with title: ${title} deleted`)
+        response.status(200).send(`Post with id ${postid} deleted`)
       }
       else {
-        response.status(404).send('User not found')
+        response.status(404).send('User not authorised')
       }
     })
   } catch {
