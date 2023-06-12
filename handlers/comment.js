@@ -119,19 +119,20 @@ const deleteComment = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    db.dbConnect().query('DELETE FROM comments WHERE commentid = $1', [commentid], (error, results) => {
+    db.dbConnect().query('DELETE FROM comments WHERE commentid = $1', [commentid], (error, result) => {
+      console.log(result)
       if (error) {
         throw error
       }
-      if (results.rowCount == 1) {
+      if (result.rowCount == 1) {
         response.status(200).send(`Comment with id: ${commentid} deleted`)
       }
       else {
-        response.status(404).send('User not authorised')
+        response.status(404).send('Comment not found')
       }
     })
   } catch {
-    response.status(401).send("Bad Token")
+    response.status(401).send("User not authorised")
   }
 }
 

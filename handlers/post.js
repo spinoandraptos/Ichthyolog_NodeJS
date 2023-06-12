@@ -123,11 +123,11 @@ const deletePost = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    db.dbConnect().query('DELETE FROM posts WHERE postid = $1', [postid], (error, results) => {
+    db.dbConnect().query('DELETE FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         throw error
       }
-      if (results.rowCount == 1) {
+      if (result.rowCount == 1) {
         response.status(200).send(`Post with id ${postid} deleted`)
       }
       else {
