@@ -55,6 +55,8 @@ express_server.delete('/user', users.deleteUser)
 
 //route handlers (posts)
 express_server.get('/posts', posts.viewAllPosts)
+express_server.get('/posts/verified', posts.viewAllVerifiedPosts)
+express_server.get('/posts/unverified', posts.viewAllUnverifiedPosts)
 express_server.get('/post/user', posts.viewUserPosts)
 express_server.get('/post/:postid', posts.viewPost)
 express_server.post('/post', posts.addPost)

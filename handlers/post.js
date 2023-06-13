@@ -6,7 +6,37 @@ dotenv.config()
 
 const viewAllPosts = async (request, response) => {
 
-  db.dbConnect().query('SELECT * FROM posts', (error, result) => {
+  db.dbConnect().query('SELECT * FROM posts ', (error, result) => {
+    if (error) {
+      throw error
+    }
+    if (result.rowCount != 0) {
+      response.status(200).json(result.rows)
+    }
+    else {
+      response.status(404).send('Posts not found')
+    }
+  })
+}
+
+const viewAllVerifiedPosts = async (request, response) => {
+
+  db.dbConnect().query('SELECT * FROM posts WHERE verified', (error, result) => {
+    if (error) {
+      throw error
+    }
+    if (result.rowCount != 0) {
+      response.status(200).json(result.rows)
+    }
+    else {
+      response.status(404).send('Posts not found')
+    }
+  })
+}
+
+const viewAllUnverifiedPosts = async (request, response) => {
+
+  db.dbConnect().query('SELECT * FROM posts WHERE NOT verified', (error, result) => {
     if (error) {
       throw error
     }
@@ -73,7 +103,7 @@ const viewUserPosts = async (request, response) => {
             const picture = result.rows[0].profilepic
             db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8)', 
             [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture], 
-            (error, results) => {
+            (error, result) => {
             if (error) {
               throw error
             }
@@ -100,7 +130,7 @@ const updatePost = async (request, response) => {
     db.dbConnect().query(
       'UPDATE users SET title = $1, description = $2, pic = $3 WHERE postid = $4',
       [title, description, pic, postid],
-      (error, results) => {
+      (error, result) => {
         if (error) {
           throw error
         }
@@ -142,6 +172,8 @@ const deletePost = async (request, response) => {
 //functions to be exported
 module.exports = {
   viewAllPosts,
+  viewAllVerifiedPosts,
+  viewAllUnverifiedPosts,
   viewPost,
   viewUserPosts,
   addPost,

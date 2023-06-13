@@ -49,7 +49,7 @@ const viewUserbyID = async(request, response) => {
   
     db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', 
     [username, hashedPassword, email], 
-    (error, results) => {
+    (error, result) => {
       if (error) {
         throw error
       }
@@ -68,11 +68,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
         [username, hashedPassword, email, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -95,11 +95,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET username = $1 WHERE userid = $2',
         [username, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -123,11 +123,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET password = $1 WHERE userid = $2',
         [hashedPassword, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -150,11 +150,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET email = $1 WHERE userid = $2',
         [email, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -178,11 +178,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET username = $1, password = $2 WHERE userid = $3',
         [username, hashedPassword, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -205,11 +205,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET username = $1, email = $2 WHERE userid = $3',
         [username, email, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -233,11 +233,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET email = $1, password = $2 WHERE userid = $3',
         [email, hashedPassword, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -260,11 +260,11 @@ const viewUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET profilepic = $1 WHERE userid = $2',
         [profilepic, userid],
-        (error, results) => {
+        (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
+          if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
           }
           else {
@@ -285,20 +285,20 @@ const viewUserbyID = async(request, response) => {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
       db.dbConnect().query(
-        'SELECT level FROM users WHERE userid = $1', [userid], (error, results) => {
+        'SELECT level FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
-            const new_level = results.rows[0].level + level
+          if(result.rowCount == 1){
+            const new_level = result.rows[0].level + level
             db.dbConnect().query(
               'UPDATE users SET level = $1 WHERE userid = $2',
               [new_level, userid],
-              (error, results) => {
+              (error, result) => {
                 if (error) {
                   throw error
                 }
-                if(results.rowCount == 1){
+                if(result.rowCount == 1){
                 response.status(200).send(`User with userid: ${userid} modified`)
                 }
                 else {
@@ -325,20 +325,20 @@ const viewUserbyID = async(request, response) => {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
       db.dbConnect().query(
-        'SELECT totalposts FROM users WHERE userid = $1', [userid], (error, results) => {
+        'SELECT totalposts FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
-            const new_posts = results.rows[0].totalposts + post_number
+          if(result.rowCount == 1){
+            const new_posts = result.rows[0].totalposts + post_number
             db.dbConnect().query(
               'UPDATE users SET totalposts = $1 WHERE userid = $2',
               [new_posts, userid],
-              (error, results) => {
+              (error, result) => {
                 if (error) {
                   throw error
                 }
-                if(results.rowCount == 1){
+                if(result.rowCount == 1){
                 response.status(200).send(`User with userid: ${userid} modified`)
                 }
                 else {
@@ -365,20 +365,20 @@ const viewUserbyID = async(request, response) => {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
       db.dbConnect().query(
-        'SELECT speciescount FROM users WHERE userid = $1', [userid], (error, results) => {
+        'SELECT speciescount FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
             throw error
           }
-          if(results.rowCount == 1){
-            const new_level = results.rows[0].speciescount + species_number
+          if(result.rowCount == 1){
+            const new_level = result.rows[0].speciescount + species_number
             db.dbConnect().query(
               'UPDATE users SET speciescount = $1 WHERE userid = $2',
               [new_level, userid],
-              (error, results) => {
+              (error, result) => {
                 if (error) {
                   throw error
                 }
-                if(results.rowCount == 1){
+                if(result.rowCount == 1){
                 response.status(200).send(`User with userid: ${userid} modified`)
                 }
                 else {
@@ -403,11 +403,11 @@ const viewUserbyID = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid 
-      db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, results) => {
+      db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, result) => {
         if (error) {
           throw error
         }
-        if(results.rowCount == 1){
+        if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} deleted`)
         }
         else {

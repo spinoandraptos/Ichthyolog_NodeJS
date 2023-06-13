@@ -97,7 +97,7 @@ const viewUserComments = async (request, response) => {
             const picture = result.rows[0].profilepic
             db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime) VALUES ($1, $2, $3, $4, $5, now())', 
             [userid, postid, authorname, content, picture], 
-            (error, results) => {
+            (error, result) => {
             if (error) {
               throw error
             }
