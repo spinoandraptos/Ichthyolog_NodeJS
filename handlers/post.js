@@ -161,7 +161,7 @@ const deletePost = async (request, response) => {
         response.status(200).send(`Post with id ${postid} deleted`)
       }
       else {
-        response.status(404).send('User not authorised')
+        response.status(404).send('Post not found')
       }
     })
   } catch {
