@@ -33,6 +33,7 @@ const port = process.env.PORT || 3000
 const users = require('./handlers/user')
 const posts = require('./handlers/post')
 const comments = require('./handlers/comment')
+const statistics = require('./handlers/statistics')
 
 //route handlers (users)
 express_server.get('/user', users.viewUser)
@@ -70,6 +71,13 @@ express_server.get('/comments/:postid', comments.viewPostComments)
 express_server.get('/comment/:commentid', comments.viewComment)
 express_server.post('/comment', comments.addComment)
 express_server.delete('/comment/:commentid', comments.deleteComment)
+
+//route handlers (statistics)
+express_server.get('/statistics/species/:species', statistics.searchSpecies)
+express_server.get('/statistics/:class', statistics.searchClass)
+express_server.get('/statistics/:class/:order', statistics.searchOrder)
+express_server.get('/statistics/:class/:order/:family', statistics.searchFamily)
+express_server.get('/statistics/:class/:order/:family/:genus', statistics.searchGenus)
 
 
 //server now listens for active connections from the specified port
