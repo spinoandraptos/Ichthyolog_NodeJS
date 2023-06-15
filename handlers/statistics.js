@@ -19,6 +19,7 @@ const searchSpecies = async (request, response) => {
         FROM posts
         WHERE title = $1 AND verified = true
           AND sightingtime >= $2 AND sightingtime <= $3
+        GROUP BY latest_sightinglocation
       `;
   
       const values = [species, startTime, endTime];
@@ -31,9 +32,8 @@ const searchSpecies = async (request, response) => {
           throw error;
         }
   
-        const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
-  
-        if (count > 0) {
+        if (result.rows.length > 0) {
+          const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
           response.status(200).json({ count, latest_sightingtime, latest_sightinglocation });
         } else {
           response.status(404).send('No entries found');
@@ -43,6 +43,7 @@ const searchSpecies = async (request, response) => {
       response.status(500).json({ error: 'Internal server error' });
     }
   };
+  
   
   
 
