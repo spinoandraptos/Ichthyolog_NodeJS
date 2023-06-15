@@ -22,7 +22,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
   const viewLatestPostComment = async (request, response) => {
@@ -41,7 +41,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -61,7 +61,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -116,14 +116,13 @@ const viewUserComments = async (request, response) => {
 const deleteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
-  console.log(commentid)
-
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     db.dbConnect().query('DELETE FROM comments WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         throw error
       }
+      console.log(result)
       if (result.rowCount == 1) {
         response.status(200).send(`Comment with id: ${commentid} deleted`)
       }
