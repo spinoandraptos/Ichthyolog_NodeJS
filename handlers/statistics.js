@@ -10,16 +10,19 @@ const searchSpecies = async (request, response) => {
   
       let query = `
         SELECT COUNT(*) AS count, MAX(posts.sightingtime) AS latest_sightingtime,
-          (SELECT sightinglocation FROM posts
-           WHERE title = $1 AND verified = true
-             AND sightingtime >= $2 AND sightingtime <= $3
-             ${sightingLocation !== '' ? 'AND sightinglocation = $4' : ''}
-           ORDER BY sightingtime DESC
-           LIMIT 1) AS latest_sightinglocation
+          (
+            SELECT posts.sightinglocation
+            FROM posts
+            WHERE title = $1 AND verified = true
+              AND sightingtime >= $2 AND sightingtime <= $3
+              ${sightingLocation !== '' ? 'AND sightinglocation = $4' : ''}
+            ORDER BY sightingtime DESC
+            LIMIT 1
+          ) AS latest_sightinglocation
         FROM posts
         WHERE title = $1 AND verified = true
           AND sightingtime >= $2 AND sightingtime <= $3
-        GROUP BY latest_sightinglocation
+        GROUP BY posts.title
       `;
   
       const values = [species, startTime, endTime];
@@ -43,7 +46,6 @@ const searchSpecies = async (request, response) => {
       response.status(500).json({ error: 'Internal server error' });
     }
   };
-  
   
   
 
