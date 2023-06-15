@@ -123,12 +123,13 @@ const viewUserPosts = async (request, response) => {
 
 const updatePost = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
-  const { postid, title, description, pic } = request.body
+  const postid = request.params.postid
+  const { title, description, pic } = request.body
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     db.dbConnect().query(
-      'UPDATE users SET title = $1, description = $2, pic = $3 WHERE postid = $4',
+      'UPDATE posts SET title = $1, description = $2, pic = $3 WHERE postid = $4',
       [title, description, pic, postid],
       (error, result) => {
         if (error) {
@@ -169,6 +170,28 @@ const deletePost = async (request, response) => {
   }
 }
 
+const verifyPost = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    db.dbConnect().query('UPDATE posts SET verified = TRUE WHERE postid = $1', [postid], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if (result.rowCount == 1) {
+        response.status(200).send(`Post with id ${postid} deleted`)
+      }
+      else {
+        response.status(404).send('Post not found')
+      }
+    })
+  } catch {
+    response.status(401).send("Bad Token")
+  }
+}
+
 //functions to be exported
 module.exports = {
   viewAllPosts,
@@ -178,5 +201,6 @@ module.exports = {
   viewUserPosts,
   addPost,
   updatePost,
-  deletePost
+  deletePost,
+  verifyPost
 }
