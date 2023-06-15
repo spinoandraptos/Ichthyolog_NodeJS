@@ -23,7 +23,7 @@ dotenv.config()
       }
     })
   } catch {
-    response.status(401).send("Bad Token")
+    response.status(401).send("User not authorised")
   }
 }
 
@@ -81,7 +81,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -108,7 +108,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -136,7 +136,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -163,7 +163,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -191,7 +191,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -218,7 +218,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -246,7 +246,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -273,7 +273,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -313,7 +313,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -353,7 +353,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -393,7 +393,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
   
@@ -415,7 +415,7 @@ const viewUserbyID = async(request, response) => {
         }
       })
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -449,7 +449,7 @@ const viewUserbyID = async(request, response) => {
       jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       response.status(200).send('Valid Token')
     } catch {
-      response.status(401).send('Bad Token')
+      response.status(401).send('User not authorised')
     }
   }
   

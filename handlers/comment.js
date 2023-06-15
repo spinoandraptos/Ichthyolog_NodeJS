@@ -22,7 +22,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
   const viewLatestPostComment = async (request, response) => {
@@ -41,7 +41,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 
@@ -61,7 +61,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("Bad Token")
+      response.status(401).send("User not authorised")
     }
   }
 

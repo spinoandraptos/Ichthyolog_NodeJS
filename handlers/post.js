@@ -67,7 +67,7 @@ const viewUserPosts = async (request, response) => {
       }
     })
   } catch {
-    response.status(401).send("Bad Token")
+    response.status(401).send("User not authorised")
   }
 }
 
@@ -144,7 +144,7 @@ const updatePost = async (request, response) => {
       }
     )
   } catch {
-    response.status(401).send("Bad Token")
+    response.status(401).send("User not authorised")
   }
 }
 
@@ -166,7 +166,7 @@ const deletePost = async (request, response) => {
       }
     })
   } catch {
-    response.status(401).send("Bad Token")
+    response.status(401).send("User not authorised")
   }
 }
 
@@ -181,14 +181,14 @@ const verifyPost = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        response.status(200).send(`Post with id ${postid} deleted`)
+        response.status(200).send(`Post with id ${postid} verified`)
       }
       else {
         response.status(404).send('Post not found')
       }
     })
   } catch {
-    response.status(401).send("Bad Token")
+    response.status(401).send("User not authorised")
   }
 }
 
