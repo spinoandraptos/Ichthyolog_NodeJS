@@ -156,13 +156,17 @@ const deletePost = async (request, response) => {
   const postid = request.params.postid
 
   try {
-    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    const userid = result.userid
     db.dbConnect().query('DELETE FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         throw error
       }
       if (result.rowCount == 1) {
+        db.dbConnect().query(
+          'UPDATE users SET level = level - 1 WHERE userid = $1'), [userid]
         response.status(200).send(`Post with id ${postid} deleted`)
+
       }
       else {
         response.status(404).send('Post not found')
