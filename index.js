@@ -73,6 +73,8 @@ express_server.get('/comment/:postid', comments.viewLatestPostComment)
 express_server.get('/comments/:postid', comments.viewPostComments)
 express_server.get('/comment/:commentid', comments.viewComment)
 express_server.post('/comment', comments.addComment)
+express_server.put('/comment/:commentid/upvote', comments.upVoteComment)
+express_server.put('/comment/:commentid/downvote', comments.downVoteComment)
 express_server.delete('/comment/:commentid', comments.deleteComment)
 
 //route handlers (statistics)

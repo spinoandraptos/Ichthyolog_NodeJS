@@ -284,16 +284,9 @@ const viewUserbyID = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
-      db.dbConnect().query(
-        'SELECT level FROM users WHERE userid = $1', [userid], (error, result) => {
-          if (error) {
-            throw error
-          }
-          if(result.rowCount == 1){
-            const new_level = result.rows[0].level + level
             db.dbConnect().query(
-              'UPDATE users SET level = $1 WHERE userid = $2',
-              [new_level, userid],
+              'UPDATE users SET level = level + $1 WHERE userid = $2',
+              [level, userid],
               (error, result) => {
                 if (error) {
                   throw error
@@ -306,12 +299,6 @@ const viewUserbyID = async(request, response) => {
                 }
               }
             )
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
     } catch {
       response.status(401).send("User not authorised")
     }
@@ -324,16 +311,9 @@ const viewUserbyID = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
-      db.dbConnect().query(
-        'SELECT totalposts FROM users WHERE userid = $1', [userid], (error, result) => {
-          if (error) {
-            throw error
-          }
-          if(result.rowCount == 1){
-            const new_posts = result.rows[0].totalposts + post_number
             db.dbConnect().query(
-              'UPDATE users SET totalposts = $1 WHERE userid = $2',
-              [new_posts, userid],
+              'UPDATE users SET totalposts = totalposts + $1 WHERE userid = $2',
+              [post_number, userid],
               (error, result) => {
                 if (error) {
                   throw error
@@ -346,12 +326,7 @@ const viewUserbyID = async(request, response) => {
                 }
               }
             )
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
+
     } catch {
       response.status(401).send("User not authorised")
     }
@@ -364,16 +339,9 @@ const viewUserbyID = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
-      db.dbConnect().query(
-        'SELECT speciescount FROM users WHERE userid = $1', [userid], (error, result) => {
-          if (error) {
-            throw error
-          }
-          if(result.rowCount == 1){
-            const new_level = result.rows[0].speciescount + species_number
             db.dbConnect().query(
-              'UPDATE users SET speciescount = $1 WHERE userid = $2',
-              [new_level, userid],
+              'UPDATE users SET speciescount = speciescount + $1 WHERE userid = $2',
+              [species_number, userid],
               (error, result) => {
                 if (error) {
                   throw error
@@ -386,12 +354,6 @@ const viewUserbyID = async(request, response) => {
                 }
               }
             )
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
     } catch {
       response.status(401).send("User not authorised")
     }

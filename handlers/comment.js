@@ -135,11 +135,57 @@ const deleteComment = async (request, response) => {
   }
 }
 
+const upVoteComment = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const commentid = request.params.commentid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if (result.rowCount == 1) {
+        response.status(200).send(`Post with id ${commentid} unflagged`)
+      }
+      else {
+        response.status(404).send('Post not found')
+      }
+    })
+  } catch {
+    response.status(401).send("User not authorised")
+  }
+}
+
+const downVoteComment = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const commentid = request.params.commentid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if (result.rowCount == 1) {
+        response.status(200).send(`Post with id ${commentid} unflagged`)
+      }
+      else {
+        response.status(404).send('Post not found')
+      }
+    })
+  } catch {
+    response.status(401).send("User not authorised")
+  }
+}
+
 module.exports = {
   viewComment,
   viewLatestPostComment,
   viewPostComments,
   viewUserComments,
   addComment,
-  deleteComment
+  deleteComment,
+  upVoteComment,
+  downVoteComment
 }
