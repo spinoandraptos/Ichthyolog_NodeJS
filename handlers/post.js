@@ -6,7 +6,7 @@ dotenv.config()
 
 const viewAllPosts = async (request, response) => {
 
-  db.dbConnect().query('SELECT * FROM posts ORDER BY flagged, time DESC ', (error, result) => {
+  db.dbConnect().query('SELECT * FROM posts ORDER BY TIME desc, flagged ', (error, result) => {
     if (error) {
       throw error
     }
@@ -21,7 +21,7 @@ const viewAllPosts = async (request, response) => {
 
 const viewAllVerifiedPosts = async (request, response) => {
 
-  db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY flagged, time DESC', (error, result) => {
+  db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY TIME desc, flagged', (error, result) => {
     if (error) {
       throw error
     }
@@ -36,7 +36,7 @@ const viewAllVerifiedPosts = async (request, response) => {
 
 const viewAllUnverifiedPosts = async (request, response) => {
 
-  db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY flagged, time DESC', (error, result) => {
+  db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY TIME desc, flagged', (error, result) => {
     if (error) {
       throw error
     }
@@ -55,7 +55,7 @@ const viewUserPosts = async (request, response) => {
   try {
     const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     const userid = result.userid
-    db.dbConnect().query('SELECT * FROM posts WHERE userid = $1 ORDER BY flagged, time DESC', [userid], (error, result) => {
+    db.dbConnect().query('SELECT * FROM posts WHERE userid = $1 ORDER BY TIME desc, flagged', [userid], (error, result) => {
       if (error) {
         throw error
       }
