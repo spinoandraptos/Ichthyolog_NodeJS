@@ -101,7 +101,7 @@ const viewUserPosts = async (request, response) => {
           }
           if(result.rowCount == 1){
             const picture = result.rows[0].profilepic
-            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8, NULLIF($9,""), NULLIF($10,""), NULLIF($11,""), NULLIF($12,""))', 
+            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8, NULLIF($9,''), NULLIF($10,''), NULLIF($11,''), NULLIF($12,''))', 
             [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus], 
             (error, result) => {
             if (error) {
