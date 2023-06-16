@@ -6,48 +6,48 @@ dotenv.config()
 
 const searchSpecies = async (request, response) => {
     try {
-        const { species, startTime, endTime, sightingLocation } = request.query;
-
-        let query = `
-        SELECT COUNT(*) AS count, MAX(sightingtime) AS latest_sightingtime,
-          (SELECT sightinglocation FROM posts
-           WHERE title = $1 AND verified = true
-             AND sightingtime >= $2 AND sightingtime <= $3
-        `;
+      const { species, startTime, endTime, sightingLocation } = request.query;
   
-        const values = [species, startTime, endTime];
-  
-        if (sightingLocation !== '') {
-            query += ' AND sightinglocation = $4';
-            values.push(sightingLocation);
-        }
-  
-        query += `
-           ORDER BY sightingtime DESC
-           LIMIT 1) AS latest_sightinglocation
+      let query = `
+        SELECT COUNT(*) AS count, MAX(posts.sightingtime) AS latest_sightingtime,
+          (
+            SELECT posts.sightinglocation
+            FROM posts
+            WHERE title = $1 AND verified = true
+              AND sightingtime >= $2 AND sightingtime <= $3
+              ${sightingLocation !== '' ? 'AND sightinglocation = $4' : ''}
+            ORDER BY sightingtime DESC
+            LIMIT 1
+          ) AS latest_sightinglocation
         FROM posts
         WHERE title = $1 AND verified = true
-        AND sightingtime >= $2 AND sightingtime <= $3
-        `;
-
-        db.dbConnect().query(query, values, (error, result) => {
-            if (error) {
-                throw error;
-            }
-
-            const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
-
-            if (count > 0) {
-                response.status(200).json({ count, latest_sightingtime, latest_sightinglocation });
-            } else {
-                response.status(404).send('No entries found');
-            }
-        });
+          AND sightingtime >= $2 AND sightingtime <= $3
+        GROUP BY posts.title
+      `;
+  
+      const values = [species, startTime, endTime];
+      if (sightingLocation !== '') {
+        values.push(sightingLocation);
+      }
+  
+      db.dbConnect().query(query, values, (error, result) => {
+        if (error) {
+          throw error;
+        }
+  
+        if (result.rows.length > 0) {
+          const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
+          response.status(200).json({ count, latest_sightingtime, latest_sightinglocation });
+        } else {
+          response.status(404).send('No entries found');
+        }
+      });
     } catch (error) {
-        console.error('Error executing query:', error);
-        response.status(500).json({ error: 'Internal server error' });
+      response.status(500).json({ error: 'Internal server error' });
     }
-};
+  };
+  
+  
 
 const searchClass = async (request, response) => {
     try {
