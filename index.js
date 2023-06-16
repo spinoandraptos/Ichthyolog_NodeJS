@@ -63,6 +63,8 @@ express_server.get('/post/:postid', posts.viewPost)
 express_server.post('/post', posts.addPost)
 express_server.put('/post/:postid', posts.updatePost)
 express_server.put('/post/:postid/verify', posts.verifyPost)
+express_server.put('/post/:postid/flag', posts.flagPost)
+express_server.put('/post/:postid/unflag', posts.unFlagPost)
 express_server.delete('/post/:postid', posts.deletePost)
 
 //route handlers (comments)

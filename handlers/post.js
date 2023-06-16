@@ -192,6 +192,50 @@ const verifyPost = async (request, response) => {
   }
 }
 
+const flagPost = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    db.dbConnect().query('UPDATE posts SET flagged = TRUE WHERE postid = $1', [postid], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if (result.rowCount == 1) {
+        response.status(200).send(`Post with id ${postid} flagged`)
+      }
+      else {
+        response.status(404).send('Post not found')
+      }
+    })
+  } catch {
+    response.status(401).send("User not authorised")
+  }
+}
+
+const unFlagPost = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    db.dbConnect().query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if (result.rowCount == 1) {
+        response.status(200).send(`Post with id ${postid} unflagged`)
+      }
+      else {
+        response.status(404).send('Post not found')
+      }
+    })
+  } catch {
+    response.status(401).send("User not authorised")
+  }
+}
+
 //functions to be exported
 module.exports = {
   viewAllPosts,
@@ -202,5 +246,7 @@ module.exports = {
   addPost,
   updatePost,
   deletePost,
-  verifyPost
+  verifyPost,
+  flagPost,
+  unFlagPost
 }
