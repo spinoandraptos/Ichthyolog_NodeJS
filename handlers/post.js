@@ -6,7 +6,7 @@ dotenv.config()
 
 const viewAllPosts = async (request, response) => {
 
-  db.dbConnect().query('SELECT * FROM posts ORDER BY TIME desc, flagged ', (error, result) => {
+  db.dbConnect().query('SELECT * FROM posts ORDER BY flagged desc, time desc ', (error, result) => {
     if (error) {
       throw error
     }
@@ -21,7 +21,7 @@ const viewAllPosts = async (request, response) => {
 
 const viewAllVerifiedPosts = async (request, response) => {
 
-  db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY TIME desc, flagged', (error, result) => {
+  db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY flagged desc, time desc', (error, result) => {
     if (error) {
       throw error
     }
@@ -36,7 +36,7 @@ const viewAllVerifiedPosts = async (request, response) => {
 
 const viewAllUnverifiedPosts = async (request, response) => {
 
-  db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY TIME desc, flagged', (error, result) => {
+  db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY flagged desc, time desc', (error, result) => {
     if (error) {
       throw error
     }
@@ -55,7 +55,7 @@ const viewUserPosts = async (request, response) => {
   try {
     const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     const userid = result.userid
-    db.dbConnect().query('SELECT * FROM posts WHERE userid = $1 ORDER BY TIME desc, flagged', [userid], (error, result) => {
+    db.dbConnect().query('SELECT * FROM posts WHERE userid = $1 ORDER BY flagged desc, time desc', [userid], (error, result) => {
       if (error) {
         throw error
       }
@@ -89,7 +89,7 @@ const viewUserPosts = async (request, response) => {
   
   const addPost= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { title, description, sightingLocation, sightingTime, imageURL } = request.body
+    const { title, description, sightingLocation, sightingTime, imageURL, _class, order, family, genus } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
@@ -101,8 +101,8 @@ const viewUserPosts = async (request, response) => {
           }
           if(result.rowCount == 1){
             const picture = result.rows[0].profilepic
-            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8)', 
-            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture], 
+            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8, NULLIF($9,""), NULLIF($10,""), NULLIF($11,""), NULLIF($12,""))', 
+            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus], 
             (error, result) => {
             if (error) {
               throw error
