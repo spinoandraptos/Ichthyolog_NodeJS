@@ -83,7 +83,7 @@ express_server.get('/statistics/:class', statistics.searchClass)
 express_server.get('/statistics/:class/:order', statistics.searchOrder)
 express_server.get('/statistics/:class/:order/:family', statistics.searchFamily)
 express_server.get('/statistics/:class/:order/:family/:genus', statistics.searchGenus)
-
+express_server.get('/statistics/catalogue/family', statistics.searchFamilyCatalogue)
 
 //server now listens for active connections from the specified port
 express_server.listen(port, () => {

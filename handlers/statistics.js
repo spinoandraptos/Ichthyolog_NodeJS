@@ -204,5 +204,6 @@ module.exports = {
     searchClass,
     searchOrder,
     searchFamily,
-    searchGenus
+    searchGenus,
+    searchFamilyCatalogue
 }
