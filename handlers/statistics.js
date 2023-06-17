@@ -87,7 +87,7 @@ const searchOrder = async (request, response) => {
         const query = `
         SELECT DISTINCT title
         FROM posts
-        WHERE _order = $1
+        WHERE "_order" = $1
           AND verified = true
         ORDER BY title ASC
       `;
