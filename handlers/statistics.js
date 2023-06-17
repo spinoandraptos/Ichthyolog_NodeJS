@@ -163,7 +163,7 @@ const searchGenus = async (request, response) => {
             if (result.rowCount > 0) {
                 response.status(200).json(result.rows);
             } else {
-                response.status(404).send('No entries found');
+                response.status(406).send('No entries found');
             }
         });
     } catch (error) {
