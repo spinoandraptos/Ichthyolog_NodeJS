@@ -145,8 +145,9 @@ const upVoteComment = async (request, response) => {
       if (error) {
         throw error
       }
+      console.log(result)
       if (result.rowCount == 1) {
-        response.status(200).send(`Post with id ${commentid} unflagged`)
+        response.status(200).send(`Post with id ${commentid} upvoted`)
       }
       else {
         response.status(404).send('Post not found')
@@ -168,7 +169,7 @@ const downVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        response.status(200).send(`Post with id ${commentid} unflagged`)
+        response.status(200).send(`Post with id ${commentid} downvoted`)
       }
       else {
         response.status(404).send('Post not found')
