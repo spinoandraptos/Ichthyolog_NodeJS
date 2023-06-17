@@ -49,7 +49,7 @@ const viewUserComments = async (request, response) => {
     const postid = request.params.postid
   
     try {
-      db.dbConnect().query('SELECT * FROM comments WHERE postid = $1', [postid], (error, result) => {
+      db.dbConnect().query('SELECT * FROM comments WHERE postid = $1 ORDER BY upvotes DESC', [postid], (error, result) => {
         if (error) {
           throw error
         }
@@ -138,10 +138,9 @@ const deleteComment = async (request, response) => {
 const upVoteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
-  const one = 1
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + $2 WHERE commentid = $1', [commentid, one], (error, result) => {
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         throw error
       }
@@ -149,6 +148,7 @@ const upVoteComment = async (request, response) => {
         response.status(200).send(`Comment with id ${commentid} upvoted`)
       }
       else {
+        console.log(result)
         response.status(404).send('Comment not found')
       }
     })
