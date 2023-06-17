@@ -49,7 +49,7 @@ const viewUserComments = async (request, response) => {
     const postid = request.params.postid
   
     try {
-      db.dbConnect().query('SELECT * FROM comments WHERE postid = $1 ORDER BY upvotes DESC', [postid], (error, result) => {
+      db.dbConnect().query('SELECT * FROM comments WHERE postid = $1 ORDER BY upvotes DESC, postedtime DESC', [postid], (error, result) => {
         if (error) {
           throw error
         }
