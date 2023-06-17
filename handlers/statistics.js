@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken')
 
 dotenv.config()
 
-User
 const searchSpecies = async (request, response) => {
     try {
         const { species, startTime, endTime, sightingLocation } = request.query;
