@@ -132,7 +132,7 @@ const searchFamily = async (request, response) => {
             if (result.rowCount > 0) {
                 response.status(200).json(result.rows);
             } else {
-                response.status(404).send('No entries found');
+                response.status(403).send('No entries found');
             }
         });
     } catch (error) {
