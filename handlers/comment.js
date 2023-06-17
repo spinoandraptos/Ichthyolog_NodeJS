@@ -138,19 +138,18 @@ const deleteComment = async (request, response) => {
 const upVoteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
-
+  const one = 1
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + $2 WHERE commentid = $1', [commentid, one], (error, result) => {
       if (error) {
         throw error
       }
-      console.log(result)
       if (result.rowCount == 1) {
-        response.status(200).send(`Post with id ${commentid} upvoted`)
+        response.status(200).send(`Comment with id ${commentid} upvoted`)
       }
       else {
-        response.status(404).send('Post not found')
+        response.status(404).send('Comment not found')
       }
     })
   } catch {
@@ -169,10 +168,10 @@ const downVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        response.status(200).send(`Post with id ${commentid} downvoted`)
+        response.status(200).send(`Comment with id ${commentid} downvoted`)
       }
       else {
-        response.status(404).send('Post not found')
+        response.status(404).send('Comment not found')
       }
     })
   } catch {
