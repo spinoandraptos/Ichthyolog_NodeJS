@@ -175,7 +175,7 @@ const searchGenus = async (request, response) => {
 const searchFamilyCatalogue = async (request, response) => {
     try {
       const query = `
-        SELECT DISTINCT family, COUNT(DISTINCT species) AS species_count
+        SELECT family, COUNT(DISTINCT species) AS species_count
         FROM posts
         WHERE verified = true
         GROUP BY family
