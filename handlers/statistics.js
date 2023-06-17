@@ -40,7 +40,7 @@ const searchSpecies = async (request, response) => {
             if (count > 0) {
                 response.status(200).json({ count, latest_sightingtime, latest_sightinglocation });
             } else {
-                response.status(400).send('No entries found');
+                response.status(404).send('No entries found');
             }
         });
     } catch (error) {
@@ -70,7 +70,7 @@ const searchClass = async (request, response) => {
             if (result.rowCount > 0) {
                 response.status(200).json(result.rows);
             } else {
-                response.status(401).send('No entries found');
+                response.status(404).send('No entries found');
             }
         });
     } catch (error) {
@@ -101,7 +101,7 @@ const searchOrder = async (request, response) => {
             if (result.rowCount > 0) {
                 response.status(200).json(result.rows);
             } else {
-                response.status(402).send('No entries found');
+                response.status(404).send('No entries found');
             }
         });
     } catch (error) {
@@ -132,7 +132,7 @@ const searchFamily = async (request, response) => {
             if (result.rowCount > 0) {
                 response.status(200).json(result.rows);
             } else {
-                response.status(403).send('No entries found');
+                response.status(404).send('No entries found');
             }
         });
     } catch (error) {
@@ -163,7 +163,7 @@ const searchGenus = async (request, response) => {
             if (result.rowCount > 0) {
                 response.status(200).json(result.rows);
             } else {
-                response.status(406).send('No entries found');
+                response.status(404).send('No entries found');
             }
         });
     } catch (error) {
