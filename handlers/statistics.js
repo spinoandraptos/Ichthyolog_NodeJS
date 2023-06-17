@@ -184,9 +184,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
       db.dbConnect().query(query, (error, result) => {
         if (error) {
-          console.error('Error executing query:', error);
-          response.status(500).json({ error: 'Internal server error' });
-          return;
+          throw error;
         }
   
         response.status(200).json(result.rows);
@@ -196,6 +194,7 @@ const searchFamilyCatalogue = async (request, response) => {
       response.status(500).json({ error: 'Internal server error' });
     }
   };
+
   
   
 
