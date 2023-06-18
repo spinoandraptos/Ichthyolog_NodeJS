@@ -22,7 +22,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("User not authorised")
+      response.status(404).send(error)
     }
   }
   const viewLatestPostComment = async (request, response) => {
@@ -41,7 +41,7 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("User not authorised")
+      response.status(404).send(error)
     }
   }
 
@@ -61,13 +61,14 @@ const viewUserComments = async (request, response) => {
         }
       })
     } catch {
-      response.status(401).send("User not authorised")
+      response.status(404).send(error)
     }
   }
 
 
   const viewComment = async(request, response) => {
     const commentid = request.params.commentid
+    try{
     db.dbConnect().query('SELECT * FROM comments WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         throw error
@@ -78,7 +79,10 @@ const viewUserComments = async (request, response) => {
       else {
         response.status(404).send('comment not found')
       }
-    })
+    })}
+    catch {
+      response.status(404).send(error)
+    }
   } 
 
   const addComment= async(request, response) => {
@@ -108,8 +112,8 @@ const viewUserComments = async (request, response) => {
             response.status(404).send('User not found')
           }
         })
-  } catch(error) {
-    response.status(401).send(error)
+  } catch {
+    response.status(404).send(error)
   }
 }
 
@@ -131,7 +135,7 @@ const deleteComment = async (request, response) => {
       }
     })
   } catch {
-    response.status(401).send("User not authorised")
+    response.status(404).send(error)
   }
 }
 
@@ -146,7 +150,7 @@ const upVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        db.dbConnect().query('INSERT INTO comments (upvoteauthorids) VALUES ($1)', [authorid], (error, result) => {
+        db.dbConnect().query('INSERT INTO upvotes (commentid, upvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
         if (result.rowCount == 1) {
           response.status(200).send(`Comment with id: ${commentid} upvoted`)
         }
@@ -159,22 +163,23 @@ const upVoteComment = async (request, response) => {
       }
     })
   } catch {
-    response.status(401).send("User not authorised")
+    response.status(404).send(error)
   }
 }
 
 const downVoteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
+  const authorid = request.body
   const commentid = request.params.commentid
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1'), [commentid], (error, result) => {
       if (error) {
         throw error
       }
       if (result.rowCount == 1) {
-        db.dbConnect().query('UPDATE comments SET upvoteauthorids = null where upvoteauthorids = $1)', [authorid], (error, result) => {
+        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result) => {
           if (result.rowCount == 1) {
             response.status(200).send(`Comment with id: ${commentid} downvoted`)
           }
@@ -185,9 +190,9 @@ const downVoteComment = async (request, response) => {
       else {
         response.status(404).send('Comment not found')
       }
-    })
+    }
   } catch {
-    response.status(401).send("User not authorised")
+    response.status(404).send(error)
   }
 }
 
