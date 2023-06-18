@@ -5,49 +5,48 @@ const jwt = require('jsonwebtoken')
 dotenv.config()
 
 const searchSpecies = async (request, response) => {
-  try {
-    const { species, startTime, endTime, sightingLocation } = request.query;
+    try {
+        const { species, startTime, endTime, sightingLocation } = request.query;
 
-    let query = `
-      SELECT COUNT(*) AS count, MAX(posts.sightingtime) AS latest_sightingtime,
-        (
-          SELECT posts.sightinglocation
-          FROM posts
-          WHERE title = $1 AND verified = true
-            AND sightingtime >= $2 AND sightingtime <= $3
-            ${sightingLocation !== '' ? 'AND sightinglocation = $4' : ''}
-          ORDER BY sightingtime DESC
-          LIMIT 1
-        ) AS latest_sightinglocation
-      FROM posts
-      WHERE title = $1 AND verified = true
+        let query = `
+        SELECT COUNT(*) AS count, MAX(sightingtime) AS latest_sightingtime,
+          (SELECT sightinglocation FROM posts
+           WHERE title = $1 AND verified = true
+             AND sightingtime >= $2 AND sightingtime <= $3
+        `;
+  
+        const values = [species, startTime, endTime];
+  
+        if (sightingLocation !== '') {
+            query += ' AND sightinglocation = $4';
+            values.push(sightingLocation);
+        }
+  
+        query += `
+           ORDER BY sightingtime DESC
+           LIMIT 1) AS latest_sightinglocation
+        FROM posts
+        WHERE title = $1 AND verified = true
         AND sightingtime >= $2 AND sightingtime <= $3
-      GROUP BY posts.title
-    `;
+        `;
 
-    const values = [species, startTime, endTime];
-    if (sightingLocation !== '') {
-      values.push(sightingLocation);
+        db.dbConnect().query(query, values, (error, result) => {
+            if (error) {
+                throw error;
+            }
+
+            const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
+
+            if (count > 0) {
+                response.status(200).json({ count, latest_sightingtime, latest_sightinglocation });
+            } else {
+                response.status(404).send('No entries found');
+            }
+        });
+    } catch (error) {
+        response.status(500).json({ error: 'Internal server error' });
     }
-
-    db.dbConnect().query(query, values, (error, result) => {
-      if (error) {
-        throw error;
-      }
-
-      if (result.rows.length > 0) {
-        const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
-        response.status(200).json({ count, latest_sightingtime, latest_sightinglocation });
-      } else {
-        response.status(404).send('No entries found');
-      }
-    });
-  } catch (error) {
-    response.status(500).json({ error: 'Internal server error' });
-  }
 };
-
-
 
 const searchClass = async (request, response) => {
     try {
@@ -87,7 +86,7 @@ const searchOrder = async (request, response) => {
         const query = `
         SELECT DISTINCT title
         FROM posts
-        WHERE order = $1
+        WHERE "_order" = $1
           AND verified = true
         ORDER BY title ASC
       `;
@@ -173,11 +172,39 @@ const searchGenus = async (request, response) => {
     }
 }
 
+const searchFamilyCatalogue = async (request, response) => {
+    try {
+      const query = `
+        SELECT family, COUNT(DISTINCT title) AS species_count
+        FROM posts
+        WHERE verified = true
+        GROUP BY family
+        ORDER BY family ASC
+      `;
+  
+      db.dbConnect().query(query, (error, result) => {
+        if (error) {
+          throw error;
+        }
+  
+        response.status(200).json(result.rows);
+      });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+  
+  
+
+
 
 module.exports = {
     searchSpecies,
     searchClass,
     searchOrder,
     searchFamily,
-    searchGenus
+    searchGenus,
+    searchFamilyCatalogue
 }
