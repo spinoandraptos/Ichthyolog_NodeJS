@@ -137,6 +137,7 @@ const deleteComment = async (request, response) => {
 
 const upVoteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
+  const authorid = request.body
   const commentid = request.params.commentid
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
@@ -145,10 +146,15 @@ const upVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        response.status(200).send(`Comment with id ${commentid} upvoted`)
+        db.dbConnect().query('INSERT INTO comments (upvoteauthorids) VALUES ($1)', [authorid], (error, result) => {
+        if (result.rowCount == 1) {
+          response.status(200).send(`Comment with id: ${commentid} upvoted`)
+        }
+        else {
+          response.status(404).send('User not found')
+        }})
       }
       else {
-        console.log(result)
         response.status(404).send('Comment not found')
       }
     })
@@ -168,7 +174,13 @@ const downVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        response.status(200).send(`Comment with id ${commentid} downvoted`)
+        db.dbConnect().query('UPDATE comments SET upvoteauthorids = null where upvoteauthorids = $1)', [authorid], (error, result) => {
+          if (result.rowCount == 1) {
+            response.status(200).send(`Comment with id: ${commentid} downvoted`)
+          }
+          else {
+            response.status(404).send('User not found')
+          }})
       }
       else {
         response.status(404).send('Comment not found')
