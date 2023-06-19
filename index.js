@@ -83,7 +83,7 @@ express_server.get('/upvotes/:commentid', upvotes.viewCommentUpvotes)
 
 //route handlers (statistics)
 express_server.get('/statistics/species/:species', statistics.searchSpecies)
-express_server.get('/statistics/class/:class', statistics.searchClass)
+express_server.get('/statistics/class/:class_', statistics.searchClass)
 express_server.get('/statistics/order/:order', statistics.searchOrder)
 express_server.get('/statistics/family/:family', statistics.searchFamily)
 express_server.get('/statistics/genus/:genus', statistics.searchGenus)
