@@ -141,7 +141,7 @@ const deleteComment = async (request, response) => {
 
 const upVoteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
-  const authorid = request.body
+  const authorid = request.params.authorid
   const commentid = request.params.commentid
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
@@ -170,7 +170,7 @@ const upVoteComment = async (request, response) => {
 
 const downVoteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
-  const authorid = request.body
+  const authorid = request.params.authorid
   const commentid = request.params.commentid
 
   try {
