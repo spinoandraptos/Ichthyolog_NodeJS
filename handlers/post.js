@@ -163,6 +163,9 @@ const deletePost = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
+        if (error) {
+          throw error
+        }
         db.dbConnect().query(
           'UPDATE users SET level = level - 1 WHERE userid = $1'), [userid]
         response.status(200).send(`Post with id ${postid} deleted`)

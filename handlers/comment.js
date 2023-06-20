@@ -175,7 +175,7 @@ const downVoteComment = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1'), [commentid], (error, result) => {
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         throw error
       }
@@ -190,7 +190,7 @@ const downVoteComment = async (request, response) => {
       else {
         response.status(404).send('Comment not found')
       }
-    }
+    })
   } catch(error) {
     response.status(404).send(error)
   }
