@@ -80,6 +80,7 @@ express_server.delete('/comment/:commentid', comments.deleteComment)
 
 //route handlers (upvotes)
 express_server.get('/upvotes/:commentid', upvotes.viewCommentUpvotes)
+express_server.get('/upvotes/:commentid/:authorid', upvotes.checkUpvoteExists)
 
 //route handlers (statistics)
 express_server.get('/statistics/species/:species', statistics.searchSpecies)
