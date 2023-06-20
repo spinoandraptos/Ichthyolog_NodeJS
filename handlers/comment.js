@@ -168,7 +168,7 @@ const upVoteComment = async (request, response) => {
   }
 }
 
-const downVoteComment = async (request, response) => {
+const unUpVoteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const authorid = request.params.authorid
   const commentid = request.params.commentid
@@ -184,7 +184,63 @@ const downVoteComment = async (request, response) => {
           if (error) {
             throw error
           }
+          response.status(200).send(`Comment with id: ${commentid} un-upvoted`)
+        })
+      }
+      else {
+        response.status(404).send('Comment not found')
+      }
+    })
+  } catch(error) {
+    response.status(404).send(error)
+  }
+}
+
+const downVoteComment = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const authorid = request.params.authorid
+  const commentid = request.params.commentid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if (result.rowCount == 1) {
+        db.dbConnect().query('INSERT INTO downvotes (commentid, downvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
+          if (error) {
+            throw error
+          }
           response.status(200).send(`Comment with id: ${commentid} downvoted`)
+        })
+      }
+      else {
+        response.status(404).send('Comment not found')
+      }
+    })
+  } catch(error) {
+    response.status(404).send(error)
+  }
+}
+
+const unDownVoteComment = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const authorid = request.params.authorid
+  const commentid = request.params.commentid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if (result.rowCount == 1) {
+        db.dbConnect().query('DELETE FROM downvotes WHERE commentid = $1 AND downvoterid = $2', [commentid, authorid], (error, result) => {
+          if (error) {
+            throw error
+          }
+          response.status(200).send(`Comment with id: ${commentid} un-downvoted`)
         })
       }
       else {
@@ -204,5 +260,7 @@ module.exports = {
   addComment,
   deleteComment,
   upVoteComment,
-  downVoteComment
+  unUpVoteComment,
+  downVoteComment,
+  unDownVoteComment
 }
