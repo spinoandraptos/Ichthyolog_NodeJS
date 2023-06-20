@@ -84,11 +84,17 @@ express_server.get('/upvotes/:commentid/:authorid', upvotes.checkUpvoteExists)
 
 //route handlers (statistics)
 express_server.get('/statistics/species/:species', statistics.searchSpecies)
-express_server.get('/statistics/class/:class', statistics.searchClass)
+express_server.get('/statistics/class/:class_', statistics.searchClass)
 express_server.get('/statistics/order/:order', statistics.searchOrder)
 express_server.get('/statistics/family/:family', statistics.searchFamily)
 express_server.get('/statistics/genus/:genus', statistics.searchGenus)
 express_server.get('/catalogue/family', statistics.searchFamilyCatalogue)
+express_server.get('/catalogue/order', statistics.searchOrderCatalogue)
+express_server.get('/catalogue/genus', statistics.searchGenusCatalogue)
+express_server.get('/catalogue/class', statistics.searchClassCatalogue)
+
+
+
 
 //server now listens for active connections from the specified port
 express_server.listen(port, () => {

@@ -85,7 +85,7 @@ const searchOrder = async (request, response) => {
         const query = `
         SELECT DISTINCT title
         FROM posts
-        WHERE "_order" = $1
+        WHERE _order = $1
           AND verified = true
         ORDER BY title ASC
       `;
@@ -194,7 +194,74 @@ const searchFamilyCatalogue = async (request, response) => {
     }
   };
 
+  const searchClassCatalogue = async (request, response) => {
+    try {
+      const query = `
+        SELECT class, COUNT(DISTINCT title) AS species_count
+        FROM posts
+        WHERE verified = true
+        GROUP BY class
+        ORDER BY class ASC
+      `;
   
+      db.dbConnect().query(query, (error, result) => {
+        if (error) {
+          throw error;
+        }
+  
+        response.status(200).json(result.rows);
+      });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
+  const searchOrderCatalogue = async (request, response) => {
+    try {
+      const query = `
+        SELECT "_order", COUNT(DISTINCT title) AS species_count
+        FROM posts
+        WHERE verified = true
+        GROUP BY "_order"
+        ORDER BY "_order" ASC
+      `;
+  
+      db.dbConnect().query(query, (error, result) => {
+        if (error) {
+          throw error;
+        }
+  
+        response.status(200).json(result.rows);
+      });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+  const searchGenusCatalogue = async (request, response) => {
+    try {
+      const query = `
+        SELECT genus, COUNT(DISTINCT title) AS species_count
+        FROM posts
+        WHERE verified = true
+        GROUP BY genus
+        ORDER BY genus ASC
+      `;
+  
+      db.dbConnect().query(query, (error, result) => {
+        if (error) {
+          throw error;
+        }
+  
+        response.status(200).json(result.rows);
+      });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  };
   
 
 
@@ -205,5 +272,8 @@ module.exports = {
     searchOrder,
     searchFamily,
     searchGenus,
-    searchFamilyCatalogue
+    searchFamilyCatalogue,
+    searchClassCatalogue,
+    searchOrderCatalogue,
+    searchGenusCatalogue
 }
