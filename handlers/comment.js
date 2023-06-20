@@ -174,25 +174,13 @@ const downVoteComment = async (request, response) => {
   const commentid = request.params.commentid
 
   try {
-    console.log(authorid)
-    console.log(commentid)
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1'), [commentid], (error, result) => {
       if (error) {
         throw error
       }
       if (result.rowCount == 1) {
-        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result) => {
-          if (error) {
-            throw error
-          }
-          if (result.rowCount == 1) {
-            response.status(200).send(`Comment with id: ${commentid} downvoted`)
-          }
-          else {
-            response.status(404).send('Comment downvte failed')
-          }
-        })
+        response.status(200).send('YO')
       }
       else {
         response.status(404).send('Comment not found')
