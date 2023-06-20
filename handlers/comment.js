@@ -180,7 +180,7 @@ const downVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result) => {
+        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2', [commentid, authorid], (error, result) => {
           if (error) {
             throw error
           }
