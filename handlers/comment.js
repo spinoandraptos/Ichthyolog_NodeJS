@@ -150,13 +150,14 @@ const upVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        db.dbConnect().query('INSERT INTO upvotes (commentid, upvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result2) => {
-        if (result2.rowCount == 1) {
+        db.dbConnect().query('INSERT INTO upvotes (commentid, upvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
+          if (error) {
+            throw error
+          }
+          else {
           response.status(200).send(`Comment with id: ${commentid} upvoted`)
-        }
-        else {
-          response.status(404).send('User not found')
-        }})
+          }
+        })
       }
       else {
         response.status(404).send('Comment not found')
@@ -179,13 +180,14 @@ const downVoteComment = async (request, response) => {
         throw error
       }
       if (result.rowCount == 1) {
-        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result2) => {
-          if (result2.rowCount == 1) {
+        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result) => {
+          if (error) {
+            throw error
+          }
+          else{
             response.status(200).send(`Comment with id: ${commentid} downvoted`)
           }
-          else {
-            response.status(404).send('User not found')
-          }})
+        })
       }
       else {
         response.status(404).send('Comment not found')
