@@ -34,7 +34,7 @@ const users = require('./handlers/user')
 const posts = require('./handlers/post')
 const comments = require('./handlers/comment')
 const statistics = require('./handlers/statistics')
-const upvotes = require("./handlers/upvote")
+const votes = require("./handlers/vote")
 
 //route handlers (users)
 express_server.get('/user', users.viewUser)
@@ -78,9 +78,9 @@ express_server.put('/comment/:commentid/:authorid/upvote', comments.upVoteCommen
 express_server.put('/comment/:commentid/:authorid/downvote', comments.downVoteComment)
 express_server.delete('/comment/:commentid', comments.deleteComment)
 
-//route handlers (upvotes)
-express_server.get('/upvotes/:commentid', upvotes.viewCommentUpvotes)
-express_server.get('/upvotes/:commentid/:authorid', upvotes.checkUpvoteExists)
+//route handlers (votes)
+express_server.get('/upvotes/:commentid/:authorid', votes.checkUpvoteExists)
+express_server.get('/downvotes/:commentid/:authorid', votes.checkDownvoteExists)
 
 //route handlers (statistics)
 express_server.get('/statistics/species/:species', statistics.searchSpecies)
