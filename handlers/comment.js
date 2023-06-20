@@ -184,12 +184,7 @@ const downVoteComment = async (request, response) => {
           if (error) {
             throw error
           }
-          if (result.rowCount == 1) {
-            response.status(200).send(`Comment with id: ${commentid} downvoted`)
-          }
-          else {
-            response.status(404).send('Comment downvote failed')
-          }
+          response.status(200).send(`Comment with id: ${commentid} downvoted`)
         })
       }
       else {
@@ -197,7 +192,6 @@ const downVoteComment = async (request, response) => {
       }
     }
   } catch(error) {
-    console.log(error)
     response.status(404).send(error)
   }
 }
