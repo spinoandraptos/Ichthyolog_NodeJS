@@ -179,8 +179,19 @@ const downVoteComment = async (request, response) => {
       if (error) {
         throw error
       }
+      console.log(result)
       if (result.rowCount == 1) {
-        response.status(200).send('YO')
+        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result) => {
+          if (error) {
+            throw error
+          }
+          if (result.rowCount == 1) {
+            response.status(200).send(`Comment with id: ${commentid} downvoted`)
+          }
+          else {
+            response.status(404).send('Comment downvote failed')
+          }
+        })
       }
       else {
         response.status(404).send('Comment not found')
