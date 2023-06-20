@@ -42,7 +42,7 @@ const searchSpecies = async (request, response) => {
                 response.status(404).send('No entries found');
             }
         });
-    } catch (error) {
+    } catch(error) {
         response.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -72,7 +72,7 @@ const searchClass = async (request, response) => {
                 response.status(404).send('No entries found');
             }
         });
-    } catch (error) {
+    } catch(error) {
         console.error('Error executing query:', error);
         response.status(500).json({ error: 'Internal server error' });
     }
@@ -103,7 +103,7 @@ const searchOrder = async (request, response) => {
                 response.status(404).send('No entries found');
             }
         });
-    } catch (error) {
+    } catch(error) {
         console.error('Error executing query:', error);
         response.status(500).json({ error: 'Internal server error' });
     }
@@ -134,7 +134,7 @@ const searchFamily = async (request, response) => {
                 response.status(404).send('No entries found');
             }
         });
-    } catch (error) {
+    } catch(error) {
         console.error('Error executing query:', error);
         response.status(500).json({ error: 'Internal server error' });
     }
@@ -165,7 +165,7 @@ const searchGenus = async (request, response) => {
                 response.status(404).send('No entries found');
             }
         });
-    } catch (error) {
+    } catch(error) {
         console.error('Error executing query:', error);
         response.status(500).json({ error: 'Internal server error' });
     }
@@ -188,7 +188,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
         response.status(200).json(result.rows);
       });
-    } catch (error) {
+    } catch(error) {
       console.error('Error executing query:', error);
       response.status(500).json({ error: 'Internal server error' });
     }
@@ -211,7 +211,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
         response.status(200).json(result.rows);
       });
-    } catch (error) {
+    } catch(error) {
       console.error('Error executing query:', error);
       response.status(500).json({ error: 'Internal server error' });
     }
@@ -234,7 +234,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
         response.status(200).json(result.rows);
       });
-    } catch (error) {
+    } catch(error) {
       console.error('Error executing query:', error);
       response.status(500).json({ error: 'Internal server error' });
     }
@@ -257,7 +257,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
         response.status(200).json(result.rows);
       });
-    } catch (error) {
+    } catch(error) {
       console.error('Error executing query:', error);
       response.status(500).json({ error: 'Internal server error' });
     }

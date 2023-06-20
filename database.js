@@ -14,8 +14,8 @@ const dbConnect = () => {
         });
         return clientPool;
     } 
-    catch (err) {
-        console.log("ERROR: " + err)
+    catch (error) {
+        console.log(error)
     }
 }
 

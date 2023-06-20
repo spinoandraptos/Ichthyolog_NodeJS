@@ -21,7 +21,7 @@ const viewUserComments = async (request, response) => {
           response.status(404).send('comments not found')
         }
       })
-    } catch {
+    } catch(error) {
       response.status(404).send(error)
     }
   }
@@ -40,7 +40,7 @@ const viewUserComments = async (request, response) => {
           response.status(404).send('comments not found')
         }
       })
-    } catch {
+    } catch(error) {
       response.status(404).send(error)
     }
   }
@@ -60,7 +60,7 @@ const viewUserComments = async (request, response) => {
           response.status(404).send('comments not found')
         }
       })
-    } catch {
+    } catch(error) {
       response.status(404).send(error)
     }
   }
@@ -80,7 +80,7 @@ const viewUserComments = async (request, response) => {
         response.status(404).send('comment not found')
       }
     })}
-    catch {
+    catch(error) {
       response.status(404).send(error)
     }
   } 
@@ -112,7 +112,7 @@ const viewUserComments = async (request, response) => {
             response.status(404).send('User not found')
           }
         })
-  } catch {
+  } catch(error) {
     response.status(404).send(error)
   }
 }
@@ -134,7 +134,7 @@ const deleteComment = async (request, response) => {
         response.status(404).send('Comment not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(404).send(error)
   }
 }
@@ -163,7 +163,7 @@ const upVoteComment = async (request, response) => {
         response.status(404).send('Comment not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(404).send(error)
   }
 }
@@ -181,11 +181,11 @@ const downVoteComment = async (request, response) => {
       }
       if (result.rowCount == 1) {
         db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result) => {
-          if (error) {
-            throw error
-          }
-          else{
+          if (result.rowCount == 1) {
             response.status(200).send(`Comment with id: ${commentid} downvoted`)
+          }
+          else {
+            response.status(404).send('Comment downvte failed')
           }
         })
       }
@@ -193,7 +193,7 @@ const downVoteComment = async (request, response) => {
         response.status(404).send('Comment not found')
       }
     }
-  } catch {
+  } catch(error) {
     response.status(404).send(error)
   }
 }

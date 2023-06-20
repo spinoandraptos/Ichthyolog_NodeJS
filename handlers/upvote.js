@@ -18,7 +18,7 @@ const viewCommentUpvotes = async (request, response) => {
           response.status(404).send('Upvotes not found')
         }
       })
-    } catch {
+    } catch(error) {
       response.status(404).send(error)
     }
   }
@@ -37,7 +37,7 @@ const viewCommentUpvotes = async (request, response) => {
           response.status(200).send('Invalid search')
         }
       })
-    } catch {
+    } catch(error) {
       response.status(404).send(error)
     }
   }

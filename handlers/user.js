@@ -22,7 +22,7 @@ dotenv.config()
         response.status(404).send('User not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(401).send("User not authorised")
   }
 }
@@ -80,7 +80,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -107,7 +107,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -135,7 +135,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -162,7 +162,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -190,7 +190,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -217,7 +217,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -245,7 +245,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -272,7 +272,7 @@ const viewUserbyID = async(request, response) => {
           }
         }
       )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -299,7 +299,7 @@ const viewUserbyID = async(request, response) => {
                 }
               }
             )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -327,7 +327,7 @@ const viewUserbyID = async(request, response) => {
               }
             )
 
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -354,7 +354,7 @@ const viewUserbyID = async(request, response) => {
                 }
               }
             )
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -376,7 +376,7 @@ const viewUserbyID = async(request, response) => {
           response.status(404).send('User not found')
         }
       })
-    } catch {
+    } catch(error) {
       response.status(401).send("User not authorised")
     }
   }
@@ -410,7 +410,7 @@ const viewUserbyID = async(request, response) => {
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       response.status(200).send('Valid Token')
-    } catch {
+    } catch(error) {
       response.status(401).send('User not authorised')
     }
   }

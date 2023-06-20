@@ -66,7 +66,7 @@ const viewUserPosts = async (request, response) => {
         response.status(404).send('Posts not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(401).send("User not authorised")
   }
 }
@@ -146,7 +146,7 @@ const updatePost = async (request, response) => {
         }
       }
     )
-  } catch {
+  } catch(error) {
     response.status(401).send("User not authorised")
   }
 }
@@ -172,7 +172,7 @@ const deletePost = async (request, response) => {
         response.status(404).send('Post not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(401).send("User not authorised")
   }
 }
@@ -194,7 +194,7 @@ const verifyPost = async (request, response) => {
         response.status(404).send('Post not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(401).send("User not authorised")
   }
 }
@@ -216,7 +216,7 @@ const flagPost = async (request, response) => {
         response.status(404).send('Post not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(401).send("User not authorised")
   }
 }
@@ -238,7 +238,7 @@ const unFlagPost = async (request, response) => {
         response.status(404).send('Post not found')
       }
     })
-  } catch {
+  } catch(error) {
     response.status(401).send("User not authorised")
   }
 }
