@@ -52,13 +52,13 @@ const viewUserbyID = async(request, response) => {
     [username, hashedPassword, email], 
     (error, result) => {
       if(error){
-        response.status(400).send(error.message)
-        console.log(error.message)
-      }
+        response.send(error.message)
+      } else {
       response.status(201).send(`User with username: ${username} added`)
+      }
     })}
     catch(error) {
-      response.status(404).send(error)
+      response.send(error.message)
     }
   }
   
@@ -86,7 +86,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -391,20 +391,19 @@ const viewUserbyID = async(request, response) => {
 
     db.dbConnect().query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username], async(error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if(result.rowCount == 1){
         if (await argon2.verify(result.rows[0].password, password)){
           var token = jwt.sign({username: result.rows[0].username, userid:result.rows[0].userid}, process.env.SECRETKEY, {expiresIn: "3h", algorithm: "HS256"} );
-          console.log(token)
           response.status(200).send(token)
         }
         else {
-          response.status(404).send('Password Incorrect')
+          response.send('Password Incorrect')
         }
       }
       else {
-        response.status(400).send('User not found')
+        response.send('User not found')
       }
     })
   }
