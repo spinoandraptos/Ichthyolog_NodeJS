@@ -51,7 +51,10 @@ const viewUserbyID = async(request, response) => {
     db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', 
     [username, hashedPassword, email], 
     (error, result) => {
-      console.log(result)
+      if(error){
+        response.status(400).send(error)
+        console.log(error)
+      }
       response.status(201).send(`User with username: ${username} added`)
     })}
     catch(error) {
