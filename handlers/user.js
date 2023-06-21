@@ -47,14 +47,15 @@ const viewUserbyID = async(request, response) => {
     const { username, password, email } = request.body
     const hashedPassword = await argon2.hash(password)
   
+    try{
     db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', 
     [username, hashedPassword, email], 
     (error, result) => {
-      if (error) {
-        throw error
-      }
       response.status(201).send(`User with username: ${username} added`)
-    })
+    })}
+    catch(error) {
+      response.status(404).send(error)
+    }
   }
   
   const updateUserProfile = async(request, response) => {
@@ -70,7 +71,7 @@ const viewUserbyID = async(request, response) => {
         [username, hashedPassword, email, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.status(404).send(error)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
