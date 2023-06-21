@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 
 dotenv.config()
   
-  const viewUser = async(request, response) => {
+  const viewOwnUser = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
   
     try {
@@ -13,7 +13,7 @@ dotenv.config()
     const userid = result.userid  
     db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if(result.rowCount == 1){
       response.status(200).json(result.rows)
@@ -23,15 +23,15 @@ dotenv.config()
       }
     })
   } catch(error) {
-    response.status(401).send("User not authorised")
+    response.send(error.message)
   }
 }
 
-const viewUserbyID = async(request, response) => {
+const viewAnyUserbyID = async(request, response) => {
   const userid = request.params.userid
   db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
     if (error) {
-      throw error
+      response.send(error.message)
     }
     if(result.rowCount == 1){
     response.status(200).json(result.rows)
@@ -75,7 +75,7 @@ const viewUserbyID = async(request, response) => {
         [username, hashedPassword, email, userid],
         (error, result) => {
           if (error) {
-            response.status(404).send(error)
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -102,7 +102,7 @@ const viewUserbyID = async(request, response) => {
         [username, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -113,7 +113,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -130,7 +130,7 @@ const viewUserbyID = async(request, response) => {
         [hashedPassword, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -141,7 +141,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -157,7 +157,7 @@ const viewUserbyID = async(request, response) => {
         [email, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -168,7 +168,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -185,7 +185,7 @@ const viewUserbyID = async(request, response) => {
         [username, hashedPassword, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -196,7 +196,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -212,7 +212,7 @@ const viewUserbyID = async(request, response) => {
         [username, email, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -223,7 +223,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -240,7 +240,7 @@ const viewUserbyID = async(request, response) => {
         [email, hashedPassword, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -251,7 +251,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -267,7 +267,7 @@ const viewUserbyID = async(request, response) => {
         [profilepic, userid],
         (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} modified`)
@@ -278,7 +278,7 @@ const viewUserbyID = async(request, response) => {
         }
       )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -294,7 +294,7 @@ const viewUserbyID = async(request, response) => {
               [level, userid],
               (error, result) => {
                 if (error) {
-                  throw error
+                  response.send(error.message)
                 }
                 if(result.rowCount == 1){
                 response.status(200).send(`User with userid: ${userid} modified`)
@@ -305,7 +305,7 @@ const viewUserbyID = async(request, response) => {
               }
             )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -321,7 +321,7 @@ const viewUserbyID = async(request, response) => {
               [post_number, userid],
               (error, result) => {
                 if (error) {
-                  throw error
+                  response.send(error.message)
                 }
                 if(result.rowCount == 1){
                 response.status(200).send(`User with userid: ${userid} modified`)
@@ -333,7 +333,7 @@ const viewUserbyID = async(request, response) => {
             )
 
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -349,7 +349,7 @@ const viewUserbyID = async(request, response) => {
               [species_number, userid],
               (error, result) => {
                 if (error) {
-                  throw error
+                  response.send(error.message)
                 }
                 if(result.rowCount == 1){
                 response.status(200).send(`User with userid: ${userid} modified`)
@@ -360,7 +360,7 @@ const viewUserbyID = async(request, response) => {
               }
             )
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
   
@@ -372,7 +372,7 @@ const viewUserbyID = async(request, response) => {
       const userid = result.userid 
       db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, result) => {
         if (error) {
-          throw error
+          response.send(error.message)
         }
         if(result.rowCount == 1){
           response.status(200).send(`User with userid: ${userid} deleted`)
@@ -382,7 +382,7 @@ const viewUserbyID = async(request, response) => {
         }
       })
     } catch(error) {
-      response.status(401).send("User not authorised")
+      response.send(error.message)
     }
   }
 
@@ -413,17 +413,17 @@ const viewUserbyID = async(request, response) => {
 
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      response.status(200).send('Valid Token')
+      response.status(200).send('Valid token')
     } catch(error) {
-      response.status(401).send('User not authorised')
+      response.send(error.message)
     }
   }
   
 
   //functions to be exported
   module.exports = {
-    viewUser,
-    viewUserbyID,
+    viewOwnUser,
+    viewAnyUserbyID,
     addUser,
     updateUserProfile,
     updateUserUsername,
