@@ -52,8 +52,8 @@ const viewUserbyID = async(request, response) => {
     [username, hashedPassword, email], 
     (error, result) => {
       if(error){
-        response.status(400).send(error)
-        console.log(error)
+        response.status(400).send(error.message)
+        console.log(error.message)
       }
       response.status(201).send(`User with username: ${username} added`)
     })}
