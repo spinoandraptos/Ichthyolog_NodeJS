@@ -393,13 +393,13 @@ const viewUserbyID = async(request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if(result.rowCount == 1){
+      else if(result.rowCount == 1){
         if (await argon2.verify(result.rows[0].password, password)){
           var token = jwt.sign({username: result.rows[0].username, userid:result.rows[0].userid}, process.env.SECRETKEY, {expiresIn: "3h", algorithm: "HS256"} );
-          response.status(200).send(token)
+          response.status(200).send('Valid credentials')
         }
         else {
-          response.send('Password Incorrect')
+          response.send('Password incorrect')
         }
       }
       else {
