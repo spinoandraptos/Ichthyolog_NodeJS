@@ -31,7 +31,7 @@ const searchSpecies = async (request, response) => {
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
-                throw error;
+                response.send(error.message);
             }
 
             const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
@@ -63,7 +63,7 @@ const searchClass = async (request, response) => {
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
-                throw error;
+                response.send(error.message);
             }
 
             if (result.rowCount > 0) {
@@ -94,7 +94,7 @@ const searchOrder = async (request, response) => {
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
-                throw error;
+                response.send(error.message);
             }
 
             if (result.rowCount > 0) {
@@ -125,7 +125,7 @@ const searchFamily = async (request, response) => {
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
-                throw error;
+                response.send(error.message);
             }
 
             if (result.rowCount > 0) {
@@ -156,7 +156,7 @@ const searchGenus = async (request, response) => {
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
-                throw error;
+                response.send(error.message);
             }
 
             if (result.rowCount > 0) {
@@ -183,7 +183,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
       db.dbConnect().query(query, (error, result) => {
         if (error) {
-          throw error;
+          response.send(error.message);
         }
   
         response.status(200).json(result.rows);
@@ -206,7 +206,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
       db.dbConnect().query(query, (error, result) => {
         if (error) {
-          throw error;
+          response.send(error.message);
         }
   
         response.status(200).json(result.rows);
@@ -229,7 +229,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
       db.dbConnect().query(query, (error, result) => {
         if (error) {
-          throw error;
+          response.send(error.message);
         }
   
         response.status(200).json(result.rows);
@@ -252,7 +252,7 @@ const searchFamilyCatalogue = async (request, response) => {
   
       db.dbConnect().query(query, (error, result) => {
         if (error) {
-          throw error;
+          response.send(error.message);
         }
   
         response.status(200).json(result.rows);

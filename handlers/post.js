@@ -8,9 +8,9 @@ const viewAllPosts = async (request, response) => {
 
   db.dbConnect().query('SELECT * FROM posts ORDER BY flagged desc, time desc ', (error, result) => {
     if (error) {
-      throw error
+      response.send(error.message)
     }
-    if (result.rowCount != 0) {
+    else if (result.rowCount != 0) {
       response.status(200).json(result.rows)
     }
     else {
@@ -23,9 +23,9 @@ const viewAllVerifiedPosts = async (request, response) => {
 
   db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY flagged desc, time desc', (error, result) => {
     if (error) {
-      throw error
+      response.send(error.message)
     }
-    if (result.rowCount != 0) {
+    else if (result.rowCount != 0) {
       response.status(200).json(result.rows)
     }
     else {
@@ -38,9 +38,9 @@ const viewAllUnverifiedPosts = async (request, response) => {
 
   db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY flagged desc, time desc', (error, result) => {
     if (error) {
-      throw error
+      response.send(error.message)
     }
-    if (result.rowCount != 0) {
+    else if (result.rowCount != 0) {
       response.status(200).json(result.rows)
     }
     else {
@@ -57,7 +57,7 @@ const viewUserPosts = async (request, response) => {
     const userid = result.userid
     db.dbConnect().query('SELECT * FROM posts WHERE userid = $1 ORDER BY flagged desc, time desc', [userid], (error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if (result.rowCount != 0) {
         response.status(200).json(result.rows)
@@ -67,7 +67,7 @@ const viewUserPosts = async (request, response) => {
       }
     })
   } catch(error) {
-    response.status(401).send("User not authorised")
+    response.send(error.message)
   }
 }
 
@@ -75,7 +75,7 @@ const viewUserPosts = async (request, response) => {
     const postid = request.params.postid
     db.dbConnect().query('SELECT * FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if(result.rowCount == 1){
       response.status(200).json(result.rows)
@@ -112,7 +112,7 @@ const viewUserPosts = async (request, response) => {
         const authorname = result.username
         db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
-            throw error
+            response.send(error.message)
           }
           if(result.rowCount == 1){
             var blank = ''
@@ -123,7 +123,7 @@ const viewUserPosts = async (request, response) => {
             [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus, blank], 
             (error, result) => {
             if (error) {
-              throw error
+              response.send(error.message)
             }
             response.status(201).send(`Post with title: ${title} added`)
           })
@@ -151,7 +151,7 @@ const updatePost = async (request, response) => {
       [title, description, pic, postid],
       (error, result) => {
         if (error) {
-          throw error
+          response.send(error.message)
         }
         if (result.rowCount == 1) {
           response.status(200).send(`post with title: ${title} modified`)
@@ -162,7 +162,7 @@ const updatePost = async (request, response) => {
       }
     )
   } catch(error) {
-    response.status(401).send("User not authorised")
+    response.send(error.message)
   }
 }
 
@@ -175,11 +175,11 @@ const deletePost = async (request, response) => {
     const userid = result.userid
     db.dbConnect().query('DELETE FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if (result.rowCount == 1) {
         if (error) {
-          throw error
+          response.send(error.message)
         }
         db.dbConnect().query(
           'UPDATE users SET level = level - 1 WHERE userid = $1'), [userid]
@@ -191,7 +191,7 @@ const deletePost = async (request, response) => {
       }
     })
   } catch(error) {
-    response.status(401).send("User not authorised")
+    response.send(error.message)
   }
 }
 
@@ -203,7 +203,7 @@ const verifyPost = async (request, response) => {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     db.dbConnect().query('UPDATE posts SET verified = TRUE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if (result.rowCount == 1) {
         response.status(200).send(`Post with id ${postid} verified`)
@@ -213,7 +213,7 @@ const verifyPost = async (request, response) => {
       }
     })
   } catch(error) {
-    response.status(401).send("User not authorised")
+    response.send(error.message)
   }
 }
 
@@ -225,7 +225,7 @@ const flagPost = async (request, response) => {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     db.dbConnect().query('UPDATE posts SET flagged = TRUE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if (result.rowCount == 1) {
         response.status(200).send(`Post with id ${postid} flagged`)
@@ -235,7 +235,7 @@ const flagPost = async (request, response) => {
       }
     })
   } catch(error) {
-    response.status(401).send("User not authorised")
+    response.send(error.message)
   }
 }
 
@@ -247,7 +247,7 @@ const unFlagPost = async (request, response) => {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
     db.dbConnect().query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
-        throw error
+        response.send(error.message)
       }
       if (result.rowCount == 1) {
         response.status(200).send(`Post with id ${postid} unflagged`)
@@ -257,7 +257,7 @@ const unFlagPost = async (request, response) => {
       }
     })
   } catch(error) {
-    response.status(401).send("User not authorised")
+    response.send(error.message)
   }
 }
 
