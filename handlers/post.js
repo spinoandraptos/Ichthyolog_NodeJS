@@ -85,6 +85,21 @@ const viewUserPosts = async (request, response) => {
       }
     })
   } 
+
+  const viewPostIdByTitle = async(request, response) => {
+    const title = request.params.title
+    db.dbConnect().query('SELECT postid FROM posts WHERE title = $1', [title], (error, result) => {
+      if (error) {
+        throw error
+      }
+      if(result.rowCount == 1){
+      response.status(200).json(result.rows)
+      }
+      else {
+        response.status(404).send('Post not found')
+      }
+    })
+  }
   
   
   const addPost= async(request, response) => {
@@ -253,6 +268,7 @@ module.exports = {
   viewAllUnverifiedPosts,
   viewPost,
   viewUserPosts,
+  viewPostIdByTitle,
   addPost,
   updatePost,
   deletePost,
