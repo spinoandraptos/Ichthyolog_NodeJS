@@ -114,7 +114,7 @@ const viewUserPosts = async (request, response) => {
           if (error) {
             response.send(error.message)
           }
-          if(result.rowCount == 1){
+          else if(result.rowCount == 1){
             var blank = ''
             const picture = result.rows[0].profilepic
             db.dbConnect().query('UPDATE users SET totalposts = totalposts + 1 WHERE userid = $1'), [userid]
