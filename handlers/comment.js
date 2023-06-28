@@ -107,8 +107,8 @@ const updateComment = async(request, response) => {
     const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
     const userid = result.userid  
           db.dbConnect().query(
-            'UPDATE comments SET content = $1, edited = TRUE, editedtime = $2 WHERE commentid = $3',
-            [content, now(), commentid],
+            'UPDATE comments SET content = $1, edited = TRUE, editedtime = now() WHERE commentid = $2',
+            [content, commentid],
             (error, result) => {
               if (error) {
                 response.send(error.message)
