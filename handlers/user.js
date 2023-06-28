@@ -64,192 +64,70 @@ const viewAnyUserbyID = async(request, response) => {
   
   const updateUserProfile = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { username, password, email } = request.body
-    const hashedPassword = await argon2.hash(password)
+    const { username, oldPassword, newPassword, email } = request.body
+    const hashedNewPassword = await argon2.hash(newPassword)
 
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
-      db.dbConnect().query(
-        'UPDATE users SET username = $1, password = $2, email = $3 WHERE userid = $4',
-        [username, hashedPassword, email, userid],
-        (error, result) => {
-          if (error) {
-            response.send(error.message)
-          }
-          if(result.rowCount == 1){
-          response.status(200).send(`User with userid: ${userid} modified`)
+      db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        else if(result.rowCount == 1){
+          if (await argon2.verify(result.rows[0], oldPassword)){
+            if(username!=''){
+              db.dbConnect().query(
+                'UPDATE users SET username = $1 WHERE userid = $2',
+                [username, userid],
+                (error, result) => {
+                  if (error) {
+                    response.send(error.message)
+                  }
+                  if(result.rowCount != 1){
+                    response.status(404).send('User not found')
+                  }
+                }
+              )
+            }
+            if(newPassword!=''){
+              db.dbConnect().query(
+                'UPDATE users SET password = $1 WHERE userid = $2',
+                [hashedNewPassword, userid],
+                (error, result) => {
+                  if (error) {
+                    response.send(error.message)
+                  }
+                  if(result.rowCount != 1){
+                    response.status(404).send('User not found')
+                  }
+                }
+              )
+            }
+            if(email!=''){
+              db.dbConnect().query(
+                'UPDATE users SET email = $1 WHERE userid = $2',
+                [email, userid],
+                (error, result) => {
+                  if (error) {
+                    response.send(error.message)
+                  }
+                  if(result.rowCount != 1){
+                    response.status(404).send('User not found')
+                  }
+                }
+              )
+            }
+            response.status(200).send('User modified')
           }
           else {
-            response.status(404).send('User not found')
+            response.send('Incorrect password')
           }
         }
-      )
-    } catch(error) {
-      response.send(error.message)
-    }
-  }
-
-  const updateUserUsername = async(request, response) => {
-    const jwt_auth = request.get('Authorisation')
-    const { username } = request.body
-
-    try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      const userid = result.userid  
-      db.dbConnect().query(
-        'UPDATE users SET username = $1 WHERE userid = $2',
-        [username, userid],
-        (error, result) => {
-          if (error) {
-            response.send(error.message)
-          }
-          if(result.rowCount == 1){
-          response.status(200).send(`User with userid: ${userid} modified`)
-          }
-          else {
-            response.status(404).send('User not found')
-          }
+        else {
+          response.send('User not found')
         }
-      )
-    } catch(error) {
-      response.send(error.message)
-    }
-  }
-
-  const updateUserPassword = async(request, response) => {
-    const jwt_auth = request.get('Authorisation')
-    const { password } = request.body
-    const hashedPassword = await argon2.hash(password)
-
-    try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      const userid = result.userid  
-      db.dbConnect().query(
-        'UPDATE users SET password = $1 WHERE userid = $2',
-        [hashedPassword, userid],
-        (error, result) => {
-          if (error) {
-            response.send(error.message)
-          }
-          if(result.rowCount == 1){
-          response.status(200).send(`User with userid: ${userid} modified`)
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
-    } catch(error) {
-      response.send(error.message)
-    }
-  }
-
-  const updateUserEmail = async(request, response) => {
-    const jwt_auth = request.get('Authorisation')
-    const { email } = request.body
-
-    try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      const userid = result.userid  
-      db.dbConnect().query(
-        'UPDATE users SET email = $1 WHERE userid = $2',
-        [email, userid],
-        (error, result) => {
-          if (error) {
-            response.send(error.message)
-          }
-          if(result.rowCount == 1){
-          response.status(200).send(`User with userid: ${userid} modified`)
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
-    } catch(error) {
-      response.send(error.message)
-    }
-  }
-
-  const updateUserUsernamePassword = async(request, response) => {
-    const jwt_auth = request.get('Authorisation')
-    const { username, password } = request.body
-    const hashedPassword = await argon2.hash(password)
-
-    try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      const userid = result.userid  
-      db.dbConnect().query(
-        'UPDATE users SET username = $1, password = $2 WHERE userid = $3',
-        [username, hashedPassword, userid],
-        (error, result) => {
-          if (error) {
-            response.send(error.message)
-          }
-          if(result.rowCount == 1){
-          response.status(200).send(`User with userid: ${userid} modified`)
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
-    } catch(error) {
-      response.send(error.message)
-    }
-  }
-
-  const updateUserUsernameEmail = async(request, response) => {
-    const jwt_auth = request.get('Authorisation')
-    const { username, email } = request.body
-
-    try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      const userid = result.userid  
-      db.dbConnect().query(
-        'UPDATE users SET username = $1, email = $2 WHERE userid = $3',
-        [username, email, userid],
-        (error, result) => {
-          if (error) {
-            response.send(error.message)
-          }
-          if(result.rowCount == 1){
-          response.status(200).send(`User with userid: ${userid} modified`)
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
-    } catch(error) {
-      response.send(error.message)
-    }
-  }
-
-  const updateUserEmailPassword = async(request, response) => {
-    const jwt_auth = request.get('Authorisation')
-    const { email, password } = request.body
-    const hashedPassword = await argon2.hash(password)
-
-    try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-      const userid = result.userid  
-      db.dbConnect().query(
-        'UPDATE users SET email = $1, password = $2 WHERE userid = $3',
-        [email, hashedPassword, userid],
-        (error, result) => {
-          if (error) {
-            response.send(error.message)
-          }
-          if(result.rowCount == 1){
-          response.status(200).send(`User with userid: ${userid} modified`)
-          }
-          else {
-            response.status(404).send('User not found')
-          }
-        }
-      )
+    })
     } catch(error) {
       response.send(error.message)
     }
@@ -426,12 +304,6 @@ const viewAnyUserbyID = async(request, response) => {
     viewAnyUserbyID,
     addUser,
     updateUserProfile,
-    updateUserUsername,
-    updateUserEmail,
-    updateUserPassword,
-    updateUserEmailPassword,
-    updateUserUsernamePassword,
-    updateUserUsernameEmail,
     updateUserPic,
     updateUserLevel,
     updateUserPost,

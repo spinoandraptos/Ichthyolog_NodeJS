@@ -98,6 +98,34 @@ const viewUserComments = async (request, response) => {
   }
 }
 
+const updateComment = async(request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const commentid = request.params.commentid
+  const { content } = request.body
+
+  try {
+    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+    const userid = result.userid  
+          db.dbConnect().query(
+            'UPDATE comments SET content = $1, edited = TRUE, editedtime = $2 WHERE commentid = $3',
+            [content, now(), commentid],
+            (error, result) => {
+              if (error) {
+                response.send(error.message)
+              }
+              if(result.rowCount == 1){
+              response.status(200).send(`Comment with commentid: ${userid} modified`)
+              }
+              else {
+                response.status(404).send('Comment not found')
+              }
+            }
+          )
+  } catch(error) {
+    response.send(error.message)
+  }
+}
+
 const deleteComment = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
@@ -238,6 +266,7 @@ module.exports = {
   viewPostComments,
   viewUserComments,
   addComment,
+  updateComment,
   deleteComment,
   upVoteComment,
   unUpVoteComment,

@@ -139,28 +139,113 @@ const viewUserPosts = async (request, response) => {
 }
 
 
-const updatePost = async (request, response) => {
+const updatePostInfo = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const { title, description, pic } = request.body
+  const { title, description } = request.body
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    db.dbConnect().query(
-      'UPDATE posts SET title = $1, description = $2, pic = $3 WHERE postid = $4',
-      [title, description, pic, postid],
-      (error, result) => {
-        if (error) {
-          response.send(error.message)
+    if(title!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET title = $1 WHERE postid = $2',
+        [title, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          else if (result.rowCount == 1) {
+            response.status(404).send('Post not found')
+          }
         }
-        if (result.rowCount == 1) {
-          response.status(200).send(`post with title: ${title} modified`)
+      )
+    }
+    if(description!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET description = $1 WHERE postid = $2',
+        [description, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          else if (result.rowCount != 1) {
+            response.status(404).send('Post not found')
+          }
         }
-        else {
-          response.status(404).send('User not found')
+      )
+    }
+    response.status(200).send(`Post with postid: ${postid} modified`)
+
+  } catch(error) {
+    response.send(error.message)
+  }
+}
+
+const updatePostClassification = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+  const { _class, order, family, genus } = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    if(_class!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET class = $1 WHERE postid = $2',
+        [_class, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          else if (result.rowCount != 1) {
+            response.status(404).send('Post not found')
+          }
         }
-      }
-    )
+      )
+    }
+    if(order!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET _order = $1 WHERE postid = $2',
+        [order, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          else if (result.rowCount != 1) {
+            response.status(404).send('Post not found')
+          }
+        }
+      )
+    }
+    if(family!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET family = $1 WHERE postid = $2',
+        [family, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          else if (result.rowCount != 1) {
+            response.status(404).send('Post not found')
+          }
+        }
+      )
+    }
+    if(genus!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET genus = $1 WHERE postid = $2',
+        [genus, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          else if (result.rowCount != 1) {
+            response.status(404).send('Post not found')
+          }
+        }
+      )
+    }
+    response.status(200).send(`Post with postid: ${postid} modified`)
+
   } catch(error) {
     response.send(error.message)
   }
@@ -270,7 +355,8 @@ module.exports = {
   viewUserPosts,
   viewPostIdByTitle,
   addPost,
-  updatePost,
+  updatePostInfo,
+  updatePostClassification,
   deletePost,
   verifyPost,
   flagPost,
