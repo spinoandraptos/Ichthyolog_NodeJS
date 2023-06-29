@@ -155,25 +155,16 @@ const viewAnyUserbyID = async(request, response) => {
                 if (error) {
                   response.send(error.message)
                 }
-                else if(result.rowCount == 1){
-                  db.dbConnect().query(
-                    'UPDATE comments SET authorpic = $1 WHERE authorid = $2',
-                    [profilepic, userid],
-                    (error, result) => {
-                      if (error) {
-                        response.send(error.message)
-                      }
-                      else if(result.rowCount == 1){
-                        response.status(200).send(`User with userid: ${userid} modified`)
-                      }
-                      else {
-                        response.status(404).send('Comments not found')
-                      }
-                    })
-              }
-              else {
-                response.status(404).send('Posts not found')
-              }})
+                db.dbConnect().query(
+                  'UPDATE comments SET authorpic = $1 WHERE authorid = $2',
+                  [profilepic, userid],
+                  (error, result) => {
+                    if (error) {
+                      response.send(error.message)
+                    }
+                    response.status(200).send(`User with userid: ${userid} modified`)
+                })
+             })
           }
           else {
             response.status(404).send('User not found')
