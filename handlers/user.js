@@ -70,12 +70,11 @@ const viewAnyUserbyID = async(request, response) => {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
-        console.log(result)
         if (error) {
           response.send(error.message)
         }
         else if(result.rowCount == 1){
-          if (await argon2.verify(result.rows[0], oldPassword)){
+          if (await argon2.verify(result.rows[0].password, oldPassword)){
             if(username!=''){
               db.dbConnect().query(
                 'UPDATE users SET username = $1 WHERE userid = $2',
