@@ -70,6 +70,7 @@ const viewAnyUserbyID = async(request, response) => {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
+        console.log(result)
         if (error) {
           response.send(error.message)
         }
