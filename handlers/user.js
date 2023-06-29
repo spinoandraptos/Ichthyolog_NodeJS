@@ -65,7 +65,6 @@ const viewAnyUserbyID = async(request, response) => {
   const updateUserProfile = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
     const { username, oldPassword, newPassword, email } = request.body
-    const hashedNewPassword = await argon2.hash(newPassword)
 
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
@@ -91,6 +90,7 @@ const viewAnyUserbyID = async(request, response) => {
               )
             }
             if(newPassword!=''){
+              const hashedNewPassword = await argon2.hash(newPassword)
               db.dbConnect().query(
                 'UPDATE users SET password = $1 WHERE userid = $2',
                 [hashedNewPassword, userid],
