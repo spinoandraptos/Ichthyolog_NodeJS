@@ -267,16 +267,27 @@ const searchFamilyCatalogue = async (request, response) => {
     try {
       const species = request.params.species;
   
-      const query = `
-        SELECT DATE_TRUNC('hour', sightingtime) AS hour,
-               COUNT(*) AS sightings_count
-        FROM posts
-        WHERE title = $1
-          AND sightingtime >= NOW() - INTERVAL '24 hours'
-          AND verified = true
-        GROUP BY hour
-        ORDER BY hour ASC
-      `;
+      const query = `SELECT gs.hour_interval,
+      COALESCE(counts.sightings_count, 0) AS sightings_count
+FROM (
+ SELECT generate_series(
+          DATE_TRUNC('hour', NOW() - INTERVAL '24 hours'),
+          DATE_TRUNC('hour', NOW()),
+          INTERVAL '1 hour'
+        ) AS hour_interval
+) AS gs
+LEFT JOIN (
+ SELECT DATE_TRUNC('hour', sightingtime) AS hour,
+        COUNT(*) AS sightings_count
+ FROM posts
+ WHERE title = $1
+   AND sightingtime >= NOW() - INTERVAL '24 hours'
+   AND sightingtime <= NOW()
+   AND verified = true
+ GROUP BY DATE_TRUNC('hour', sightingtime)
+) AS counts ON gs.hour_interval = counts.hour
+ORDER BY gs.hour_interval ASC
+`;
   
       const values = [species];
   
