@@ -82,6 +82,7 @@ const viewAnyUserbyID = async(request, response) => {
                 [username, userid],
                 (error, result) => {
                   if (error) {
+                    console.log(error.message)
                     response.send(error.message)
                     return
                   }
@@ -95,6 +96,7 @@ const viewAnyUserbyID = async(request, response) => {
                       [username, userid],
                       (error, result) => {
                         if (error) {
+                          console.log(error.message)
                           response.send(error.message)
                           return
                         }
