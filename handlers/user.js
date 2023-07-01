@@ -79,9 +79,9 @@ const viewAnyUserbyID = async(request, response) => {
               db.dbConnect().query(
                 'UPDATE users SET username = $1 WHERE userid = $2',
                 [username, userid],
-                (error, result) => {
-                  if (error) {
-                    response.send(error.message)
+                (errorUser, result) => {
+                  if (errorUser) {
+                    response.send(errorUser.message)
                   }
                   else if(result.rowCount != 1){
                     response.status(404).send('User not found')
@@ -90,17 +90,17 @@ const viewAnyUserbyID = async(request, response) => {
                     db.dbConnect().query(
                       'UPDATE posts SET authorname = $1 WHERE userid = $2',
                       [username, userid],
-                      (errorUsername, result) => {
-                        if (errorUsername) {
-                          response.send(error.message)
+                      (errorPost, result) => {
+                        if (errorPost) {
+                          response.send(errorPost.message)
                         }
                         else {
                           db.dbConnect().query(
                           'UPDATE comments SET authorname = $1 WHERE authorid = $2',
                           [username, userid],
-                          (error, result) => {
-                            if (error) {
-                              response.send(error.message)
+                          (errorComment, result) => {
+                            if (errorComment) {
+                              response.send(errorComment.message)
                             }
                         })
                         }
@@ -167,7 +167,7 @@ const viewAnyUserbyID = async(request, response) => {
         [profilepic, userid],
         (errorUser, result) => {
           if (errorUser) {
-            response.send(error.message)
+            response.send(errorUser.message)
           }
           else if(result.rowCount == 1){
             db.dbConnect().query(
@@ -175,7 +175,7 @@ const viewAnyUserbyID = async(request, response) => {
               [profilepic, userid],
               (errorPost) => {
                 if (errorPost) {
-                  response.send(error.message)
+                  response.send(errorPost.message)
                 }
                 else {
                   db.dbConnect().query(
@@ -183,7 +183,7 @@ const viewAnyUserbyID = async(request, response) => {
                   [profilepic, userid],
                   (errorComment) => {
                     if (errorComment) {
-                      response.send(error.message)
+                      response.send(errorComment.message)
                     }
                     response.status(200).send(`User with userid: ${userid} modified`)
                 })
