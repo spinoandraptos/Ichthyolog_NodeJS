@@ -65,6 +65,7 @@ const viewAnyUserbyID = async(request, response) => {
   const updateUserProfile = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
     const { username, oldPassword, newPassword, email } = request.body
+    var responseSent = false
 
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
@@ -72,6 +73,7 @@ const viewAnyUserbyID = async(request, response) => {
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
           response.send(error.message)
+          responseSent = true;
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
@@ -82,9 +84,11 @@ const viewAnyUserbyID = async(request, response) => {
                 (errorUser, result) => {
                   if (errorUser) {
                     response.send(errorUser.message)
+                    responseSent = true;
                   }
                   else if(result.rowCount != 1){
                     response.status(404).send('User not found')
+                    responseSent = true;
                   }
                   else {
                     db.dbConnect().query(
@@ -93,6 +97,7 @@ const viewAnyUserbyID = async(request, response) => {
                       (errorPost, result) => {
                         if (errorPost) {
                           response.send(errorPost.message)
+                          responseSent = true;
                         }
                         else {
                           db.dbConnect().query(
@@ -101,6 +106,7 @@ const viewAnyUserbyID = async(request, response) => {
                           (errorComment, result) => {
                             if (errorComment) {
                               response.send(errorComment.message)
+                              responseSent = true;
                             }
                         })
                         }
@@ -117,9 +123,11 @@ const viewAnyUserbyID = async(request, response) => {
                 (errorPW, result) => {
                   if (errorPW) {
                     response.send(errorPW.message)
+                    responseSent = true;
                   }
                   else if(result.rowCount != 1){
                     response.status(404).send('User not found')
+                    responseSent = true;
                   }
                 }
               )
@@ -131,14 +139,16 @@ const viewAnyUserbyID = async(request, response) => {
                 (errorEmail, result) => {
                   if (errorEmail) {
                     response.send(errorEmail.message)
+                    responseSent = true;
                   }
                   else if(result.rowCount != 1){
                     response.status(404).send('User not found')
+                    responseSent = true;
                   }
                 }
               )
             }
-            if(!errorUsername && !errorPW && !errorEmail){
+            if(!responseSent){
               response.status(200).send('User modified')
             }
           }
@@ -158,6 +168,7 @@ const viewAnyUserbyID = async(request, response) => {
   const updateUserPic = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
     const { profilepic } = request.body
+    var responseSent = false
 
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
@@ -168,6 +179,7 @@ const viewAnyUserbyID = async(request, response) => {
         (errorUser, result) => {
           if (errorUser) {
             response.send(errorUser.message)
+            responseSent = true;
           }
           else if(result.rowCount == 1){
             db.dbConnect().query(
@@ -176,6 +188,7 @@ const viewAnyUserbyID = async(request, response) => {
               (errorPost) => {
                 if (errorPost) {
                   response.send(errorPost.message)
+                  responseSent = true;
                 }
                 else {
                   db.dbConnect().query(
@@ -184,8 +197,11 @@ const viewAnyUserbyID = async(request, response) => {
                   (errorComment) => {
                     if (errorComment) {
                       response.send(errorComment.message)
+                      responseSent = true;
                     }
-                    response.status(200).send(`User with userid: ${userid} modified`)
+                    if(!responseSent){
+                      response.status(200).send(`User with userid: ${userid} modified`)
+                    }
                 })
               }
              })
