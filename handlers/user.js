@@ -65,15 +65,14 @@ const viewAnyUserbyID = async(request, response) => {
   const updateUserProfile = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
     const { username, oldPassword, newPassword, email } = request.body
-    var responseSent = false
 
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
-        if (error && !responseSent) {
+        if (error) {
           response.send(error.message)
-          responseSent = true;
+          return
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
@@ -81,32 +80,32 @@ const viewAnyUserbyID = async(request, response) => {
               db.dbConnect().query(
                 'UPDATE users SET username = $1 WHERE userid = $2',
                 [username, userid],
-                (errorUser, result) => {
-                  if (errorUser && !responseSent) {
-                    response.send(errorUser.message)
-                    responseSent = true;
+                (error, result) => {
+                  if (error) {
+                    response.send(error.message)
+                    return
                   }
-                  else if(result.rowCount != 1 && !responseSent){
+                  else if(result.rowCount != 1){
                     response.status(404).send('User not found')
-                    responseSent = true;
+                    return
                   }
                   else {
                     db.dbConnect().query(
                       'UPDATE posts SET authorname = $1 WHERE userid = $2',
                       [username, userid],
-                      (errorPost, result) => {
-                        if (errorPost && !responseSent) {
-                          response.send(errorPost.message)
-                          responseSent = true;
+                      (error, result) => {
+                        if (error) {
+                          response.send(error.message)
+                          return
                         }
                         else {
                           db.dbConnect().query(
                           'UPDATE comments SET authorname = $1 WHERE authorid = $2',
                           [username, userid],
-                          (errorComment, result) => {
-                            if (errorComment && !responseSent) {
-                              response.send(errorComment.message)
-                              responseSent = true;
+                          (error, result) => {
+                            if (error) {
+                              response.send(error.message)
+                              return
                             }
                         })
                         }
@@ -120,14 +119,14 @@ const viewAnyUserbyID = async(request, response) => {
               db.dbConnect().query(
                 'UPDATE users SET password = $1 WHERE userid = $2',
                 [hashedNewPassword, userid],
-                (errorPW, result) => {
-                  if (errorPW && !responseSent) {
-                    response.send(errorPW.message)
-                    responseSent = true;
+                (error, result) => {
+                  if (error) {
+                    response.send(error.message)
+                    return
                   }
-                  else if(result.rowCount != 1 && !responseSent){
+                  else if(result.rowCount != 1){
                     response.status(404).send('User not found')
-                    responseSent = true;
+                    return
                   }
                 }
               )
@@ -136,21 +135,19 @@ const viewAnyUserbyID = async(request, response) => {
               db.dbConnect().query(
                 'UPDATE users SET email = $1 WHERE userid = $2',
                 [email, userid],
-                (errorEmail, result) => {
-                  if (errorEmail && !responseSent) {
-                    response.send(errorEmail.message)
-                    responseSent = true;
+                (error, result) => {
+                  if (error) {
+                    response.send(error.message)
+                    return
                   }
-                  else if(result.rowCount != 1 && !responseSent){
+                  else if(result.rowCount != 1){
                     response.status(404).send('User not found')
-                    responseSent = true;
+                    return
                   }
                 }
               )
             }
-            if(!responseSent){
-              response.status(200).send('User modified')
-            }
+            response.status(200).send('User modified')
           }
           else {
             response.send('Incorrect password')
@@ -168,7 +165,6 @@ const viewAnyUserbyID = async(request, response) => {
   const updateUserPic = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
     const { profilepic } = request.body
-    var responseSent = false
 
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
@@ -176,32 +172,30 @@ const viewAnyUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET profilepic = $1 WHERE userid = $2',
         [profilepic, userid],
-        (errorUser, result) => {
-          if (errorUser && !responseSent) {
-            response.send(errorUser.message)
-            responseSent = true;
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            return
           }
           else if(result.rowCount == 1){
             db.dbConnect().query(
               'UPDATE posts SET authorpicurl = $1 WHERE userid = $2',
               [profilepic, userid],
-              (errorPost) => {
-                if (errorPost && !responseSent) {
-                  response.send(errorPost.message)
-                  responseSent = true;
+              (error) => {
+                if (error) {
+                  response.send(error.message)
+                  return
                 }
                 else {
                   db.dbConnect().query(
                   'UPDATE comments SET authorpic = $1 WHERE authorid = $2',
                   [profilepic, userid],
-                  (errorComment) => {
-                    if (errorComment && !responseSent) {
-                      response.send(errorComment.message)
-                      responseSent = true;
+                  (error) => {
+                    if (error) {
+                      response.send(error.message)
+                      return
                     }
-                    if(!responseSent){
-                      response.status(200).send(`User with userid: ${userid} modified`)
-                    }
+                    response.status(200).send(`User with userid: ${userid} modified`)
                 })
               }
              })
