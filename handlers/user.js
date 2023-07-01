@@ -86,6 +86,26 @@ const viewAnyUserbyID = async(request, response) => {
                   if(result.rowCount != 1){
                     response.status(404).send('User not found')
                   }
+                  else {
+                    db.dbConnect().query(
+                      'UPDATE posts SET authorname = $1 WHERE userid = $2',
+                      [username, userid],
+                      (error, result) => {
+                        if (error) {
+                          response.send(error.message)
+                        }
+                        else {
+                          db.dbConnect().query(
+                          'UPDATE comments SET authorname = $1 WHERE authorid = $2',
+                          [username, userid],
+                          (error, result) => {
+                            if (error) {
+                              response.send(error.message)
+                            }
+                        })
+                        }
+                     })
+                  }
                 }
               )
             }
@@ -155,7 +175,8 @@ const viewAnyUserbyID = async(request, response) => {
                 if (error) {
                   response.send(error.message)
                 }
-                db.dbConnect().query(
+                else {
+                  db.dbConnect().query(
                   'UPDATE comments SET authorpic = $1 WHERE authorid = $2',
                   [profilepic, userid],
                   (error, result) => {
@@ -164,6 +185,7 @@ const viewAnyUserbyID = async(request, response) => {
                     }
                     response.status(200).send(`User with userid: ${userid} modified`)
                 })
+              }
              })
           }
           else {
