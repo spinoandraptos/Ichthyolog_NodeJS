@@ -71,7 +71,7 @@ const viewAnyUserbyID = async(request, response) => {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
       const userid = result.userid  
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
-        if (error) {
+        if (error && !responseSent) {
           response.send(error.message)
           responseSent = true;
         }
@@ -82,11 +82,11 @@ const viewAnyUserbyID = async(request, response) => {
                 'UPDATE users SET username = $1 WHERE userid = $2',
                 [username, userid],
                 (errorUser, result) => {
-                  if (errorUser) {
+                  if (errorUser && !responseSent) {
                     response.send(errorUser.message)
                     responseSent = true;
                   }
-                  else if(result.rowCount != 1){
+                  else if(result.rowCount != 1 && !responseSent){
                     response.status(404).send('User not found')
                     responseSent = true;
                   }
@@ -95,7 +95,7 @@ const viewAnyUserbyID = async(request, response) => {
                       'UPDATE posts SET authorname = $1 WHERE userid = $2',
                       [username, userid],
                       (errorPost, result) => {
-                        if (errorPost) {
+                        if (errorPost && !responseSent) {
                           response.send(errorPost.message)
                           responseSent = true;
                         }
@@ -104,7 +104,7 @@ const viewAnyUserbyID = async(request, response) => {
                           'UPDATE comments SET authorname = $1 WHERE authorid = $2',
                           [username, userid],
                           (errorComment, result) => {
-                            if (errorComment) {
+                            if (errorComment && !responseSent) {
                               response.send(errorComment.message)
                               responseSent = true;
                             }
@@ -121,11 +121,11 @@ const viewAnyUserbyID = async(request, response) => {
                 'UPDATE users SET password = $1 WHERE userid = $2',
                 [hashedNewPassword, userid],
                 (errorPW, result) => {
-                  if (errorPW) {
+                  if (errorPW && !responseSent) {
                     response.send(errorPW.message)
                     responseSent = true;
                   }
-                  else if(result.rowCount != 1){
+                  else if(result.rowCount != 1 && !responseSent){
                     response.status(404).send('User not found')
                     responseSent = true;
                   }
@@ -137,11 +137,11 @@ const viewAnyUserbyID = async(request, response) => {
                 'UPDATE users SET email = $1 WHERE userid = $2',
                 [email, userid],
                 (errorEmail, result) => {
-                  if (errorEmail) {
+                  if (errorEmail && !responseSent) {
                     response.send(errorEmail.message)
                     responseSent = true;
                   }
-                  else if(result.rowCount != 1){
+                  else if(result.rowCount != 1 && !responseSent){
                     response.status(404).send('User not found')
                     responseSent = true;
                   }
@@ -177,7 +177,7 @@ const viewAnyUserbyID = async(request, response) => {
         'UPDATE users SET profilepic = $1 WHERE userid = $2',
         [profilepic, userid],
         (errorUser, result) => {
-          if (errorUser) {
+          if (errorUser && !responseSent) {
             response.send(errorUser.message)
             responseSent = true;
           }
@@ -186,7 +186,7 @@ const viewAnyUserbyID = async(request, response) => {
               'UPDATE posts SET authorpicurl = $1 WHERE userid = $2',
               [profilepic, userid],
               (errorPost) => {
-                if (errorPost) {
+                if (errorPost && !responseSent) {
                   response.send(errorPost.message)
                   responseSent = true;
                 }
@@ -195,7 +195,7 @@ const viewAnyUserbyID = async(request, response) => {
                   'UPDATE comments SET authorpic = $1 WHERE authorid = $2',
                   [profilepic, userid],
                   (errorComment) => {
-                    if (errorComment) {
+                    if (errorComment && !responseSent) {
                       response.send(errorComment.message)
                       responseSent = true;
                     }
