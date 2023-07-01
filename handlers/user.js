@@ -116,7 +116,7 @@ const viewAnyUserbyID = async(request, response) => {
                 [hashedNewPassword, userid],
                 (errorPW, result) => {
                   if (errorPW) {
-                    response.send(error.message)
+                    response.send(errorPW.message)
                   }
                   else if(result.rowCount != 1){
                     response.status(404).send('User not found')
@@ -130,7 +130,7 @@ const viewAnyUserbyID = async(request, response) => {
                 [email, userid],
                 (errorEmail, result) => {
                   if (errorEmail) {
-                    response.send(error.message)
+                    response.send(errorEmail.message)
                   }
                   else if(result.rowCount != 1){
                     response.status(404).send('User not found')
