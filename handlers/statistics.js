@@ -262,6 +262,38 @@ const searchFamilyCatalogue = async (request, response) => {
       response.status(500).json({ error: 'Internal server error' });
     }
   };
+
+  const getSpeciesSightingsByHour = async (request, response) => {
+    try {
+      const species = request.params.species;
+  
+      const query = `
+        SELECT DATE_TRUNC('hour', sightingtime) AS hour,
+               COUNT(*) AS sightings_count
+        FROM posts
+        WHERE title = $1
+          AND sightingtime >= NOW() - INTERVAL '24 hours'
+        GROUP BY hour
+        ORDER BY hour ASC
+      `;
+  
+      const values = [species];
+  
+      db.dbConnect().query(query, values, (error, result) => {
+        if (error) {
+          console.error('Error executing query:', error);
+          response.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+  
+        response.status(200).json(result.rows);
+      });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
   
 
 
@@ -275,5 +307,6 @@ module.exports = {
     searchFamilyCatalogue,
     searchClassCatalogue,
     searchOrderCatalogue,
-    searchGenusCatalogue
+    searchGenusCatalogue,
+    getSpeciesSightingsByHour
 }
