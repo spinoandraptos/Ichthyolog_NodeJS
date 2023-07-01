@@ -273,6 +273,7 @@ const searchFamilyCatalogue = async (request, response) => {
         FROM posts
         WHERE title = $1
           AND sightingtime >= NOW() - INTERVAL '24 hours'
+          AND verified = true
         GROUP BY hour
         ORDER BY hour ASC
       `;
