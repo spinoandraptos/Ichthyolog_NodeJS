@@ -90,7 +90,7 @@ express_server.get('/catalogue/family', statistics.searchFamilyCatalogue)
 express_server.get('/catalogue/order', statistics.searchOrderCatalogue)
 express_server.get('/catalogue/genus', statistics.searchGenusCatalogue)
 express_server.get('/catalogue/class', statistics.searchClassCatalogue)
-
+express_server.get('/statistics/hour/:species', statistics.getSpeciesSightingsByHour)
 
 
 
