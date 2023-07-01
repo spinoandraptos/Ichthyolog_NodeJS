@@ -83,15 +83,15 @@ const viewAnyUserbyID = async(request, response) => {
                   if (error) {
                     response.send(error.message)
                   }
-                  if(result.rowCount != 1){
+                  else if(result.rowCount != 1){
                     response.status(404).send('User not found')
                   }
                   else {
                     db.dbConnect().query(
                       'UPDATE posts SET authorname = $1 WHERE userid = $2',
                       [username, userid],
-                      (error, result) => {
-                        if (error) {
+                      (errorUsername, result) => {
+                        if (errorUsername) {
                           response.send(error.message)
                         }
                         else {
@@ -114,11 +114,11 @@ const viewAnyUserbyID = async(request, response) => {
               db.dbConnect().query(
                 'UPDATE users SET password = $1 WHERE userid = $2',
                 [hashedNewPassword, userid],
-                (error, result) => {
-                  if (error) {
+                (errorPW, result) => {
+                  if (errorPW) {
                     response.send(error.message)
                   }
-                  if(result.rowCount != 1){
+                  else if(result.rowCount != 1){
                     response.status(404).send('User not found')
                   }
                 }
@@ -128,17 +128,19 @@ const viewAnyUserbyID = async(request, response) => {
               db.dbConnect().query(
                 'UPDATE users SET email = $1 WHERE userid = $2',
                 [email, userid],
-                (error, result) => {
-                  if (error) {
+                (errorEmail, result) => {
+                  if (errorEmail) {
                     response.send(error.message)
                   }
-                  if(result.rowCount != 1){
+                  else if(result.rowCount != 1){
                     response.status(404).send('User not found')
                   }
                 }
               )
             }
-            response.status(200).send('User modified')
+            if(!errorUsername && !errorPW && !errorEmail){
+              response.status(200).send('User modified')
+            }
           }
           else {
             response.send('Incorrect password')
@@ -163,24 +165,24 @@ const viewAnyUserbyID = async(request, response) => {
       db.dbConnect().query(
         'UPDATE users SET profilepic = $1 WHERE userid = $2',
         [profilepic, userid],
-        (error, result) => {
-          if (error) {
+        (errorUser, result) => {
+          if (errorUser) {
             response.send(error.message)
           }
           else if(result.rowCount == 1){
             db.dbConnect().query(
               'UPDATE posts SET authorpicurl = $1 WHERE userid = $2',
               [profilepic, userid],
-              (error, result) => {
-                if (error) {
+              (errorPost) => {
+                if (errorPost) {
                   response.send(error.message)
                 }
                 else {
                   db.dbConnect().query(
                   'UPDATE comments SET authorpic = $1 WHERE authorid = $2',
                   [profilepic, userid],
-                  (error, result) => {
-                    if (error) {
+                  (errorComment) => {
+                    if (errorComment) {
                       response.send(error.message)
                     }
                     response.status(200).send(`User with userid: ${userid} modified`)
