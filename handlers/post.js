@@ -104,7 +104,7 @@ const viewUserPosts = async (request, response) => {
   
   const addPost= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { title, description, sightingLocation, sightingTime, imageURL, _class, order, family, genus } = request.body
+    const { title, description, sightingLocation, sightingTime, imageURL, _class, order, family, genus, species } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
@@ -119,8 +119,8 @@ const viewUserPosts = async (request, response) => {
             const picture = result.rows[0].profilepic
             db.dbConnect().query('UPDATE users SET totalposts = totalposts + 1 WHERE userid = $1'), [userid]
             db.dbConnect().query('UPDATE users SET level = level + 1 WHERE userid = $1'), [userid]
-            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8, NULLIF($9,$13), NULLIF($10,$13), NULLIF($11,$13), NULLIF($12,$13))', 
-            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus, blank], 
+            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus, species) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8, NULLIF($9,$14), NULLIF($10,$14), NULLIF($11,$14), NULLIF($12,$14), NULLIF($13,$14))', 
+            [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus, species, blank], 
             (error, result) => {
             if (error) {
               response.send(error.message)
@@ -184,7 +184,7 @@ const updatePostInfo = async (request, response) => {
 const updatePostClassification = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const { _class, order, family, genus } = request.body
+  const { _class, order, family, genus, species } = request.body
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
@@ -195,9 +195,11 @@ const updatePostClassification = async (request, response) => {
         (error, result) => {
           if (error) {
             response.send(error.message)
-          }
+            return
+          }        
           else if (result.rowCount != 1) {
             response.status(404).send('Post not found')
+            return
           }
         }
       )
@@ -209,9 +211,11 @@ const updatePostClassification = async (request, response) => {
         (error, result) => {
           if (error) {
             response.send(error.message)
+            return
           }
           else if (result.rowCount != 1) {
             response.status(404).send('Post not found')
+            return
           }
         }
       )
@@ -223,9 +227,11 @@ const updatePostClassification = async (request, response) => {
         (error, result) => {
           if (error) {
             response.send(error.message)
+            return
           }
           else if (result.rowCount != 1) {
             response.status(404).send('Post not found')
+            return
           }
         }
       )
@@ -237,9 +243,27 @@ const updatePostClassification = async (request, response) => {
         (error, result) => {
           if (error) {
             response.send(error.message)
+            return
           }
           else if (result.rowCount != 1) {
             response.status(404).send('Post not found')
+            return
+          }
+        }
+      )
+    }
+    if(species!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET species = $1 WHERE postid = $2',
+        [species, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            return
+          }
+          else if (result.rowCount != 1) {
+            response.status(404).send('Post not found')
+            return
           }
         }
       )
