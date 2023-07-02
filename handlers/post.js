@@ -142,7 +142,7 @@ const viewUserPosts = async (request, response) => {
 const updatePostInfo = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const { title, description } = request.body
+  const { title, description, sightingLocation } = request.body
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
@@ -153,9 +153,11 @@ const updatePostInfo = async (request, response) => {
         (error, result) => {
           if (error) {
             response.send(error.message)
+            return 
           }
           else if (result.rowCount != 1) {
             response.status(404).send('Post not found')
+            return
           }
         }
       )
@@ -167,9 +169,27 @@ const updatePostInfo = async (request, response) => {
         (error, result) => {
           if (error) {
             response.send(error.message)
+            return
           }
           else if (result.rowCount != 1) {
             response.status(404).send('Post not found')
+            return
+          }
+        }
+      )
+    }
+    if(sightingLocation!=''){
+      db.dbConnect().query(
+        'UPDATE posts SET sightinglocation = $1 WHERE postid = $2',
+        [sightingLocation, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            return
+          }
+          else if (result.rowCount != 1) {
+            response.status(404).send('Post not found')
+            return
           }
         }
       )
