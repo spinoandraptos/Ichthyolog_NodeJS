@@ -78,7 +78,7 @@ const viewUserComments = async (request, response) => {
           if (error) {
             response.send(error.message)
           }
-          if(result.rowCount == 1){
+          else if(result.rowCount == 1){
             const picture = result.rows[0].profilepic
             db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime) VALUES ($1, $2, $3, $4, $5, now())', 
             [userid, postid, authorname, content, picture], 
@@ -86,7 +86,7 @@ const viewUserComments = async (request, response) => {
             if (error) {
               response.send(error.message)
             }
-            response.status(201).send(`Comment by ${authorname} added`)
+            else {response.status(201).send(`Comment by ${authorname} added`)}
           })
           }
           else {
@@ -138,22 +138,36 @@ const acceptIdSuggestion = async(request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
     db.dbConnect().query(
-      'UPDATE comments SET suggestionapproved = TRUE WHERE commentid = $1',
-      [commentid],
+      'SELECT FROM comments WHERE postid = $1 AND suggestionapproved = TRUE',
+      [postid],
       (error, result) => {
         if (error) {
           response.send(error.message)
         }
-        else if(result.rowCount == 1){
-          db.dbConnect().query(
-            'UPDATE posts SET title = $1 WHERE postid = $2',
-            [content, postid],
+        else if(result.rowCount != 1){
+          dbb.dbConnect().query(
+            'UPDATE comments SET suggestionapproved = TRUE WHERE commentid = $1',
+            [commentid],
             (error, result) => {
               if (error) {
                 response.send(error.message)
               }
               else if(result.rowCount == 1){
-              response.status(200).send(`Post with postid: ${postid} modified`)
+                db.dbConnect().query(
+                  'UPDATE posts SET title = $1 WHERE postid = $2',
+                  [content, postid],
+                  (error, result) => {
+                    if (error) {
+                      response.send(error.message)
+                    }
+                    else if(result.rowCount == 1){
+                    response.status(200).send(`Post with postid: ${postid} modified`)
+                    }
+                    else {
+                      response.status(404).send('Post not found')
+                    }
+                  }
+                )
               }
               else {
                 response.status(404).send('Post not found')
@@ -162,11 +176,10 @@ const acceptIdSuggestion = async(request, response) => {
           )
         }
         else {
-          response.status(404).send('Post not found')
+          response.status(404).send('Approved ID already exists')
         }
       }
-    )
-    
+    )   
   } catch(error) {
     response.send(error.message)
   }
