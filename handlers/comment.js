@@ -14,7 +14,7 @@ const viewUserComments = async (request, response) => {
         if (error) {
           response.send(error.message)
         }
-        if (result.rowCount != 0) {
+        else if (result.rowCount != 0) {
           response.status(200).json(result.rows)
         }
         else {
@@ -34,7 +34,7 @@ const viewUserComments = async (request, response) => {
         if (error) {
           response.send(error.message)
         }
-        if (result.rowCount != 0) {
+        else if (result.rowCount != 0) {
           response.status(200).json(result.rows)
         }
         else {
@@ -54,7 +54,7 @@ const viewUserComments = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if(result.rowCount == 1){
+      else if(result.rowCount == 1){
       response.status(200).json(result.rows)
       }
       else {
@@ -118,7 +118,7 @@ const addIdSuggestion= async(request, response) => {
           if (error) {
             response.send(error.message)
           }
-          response.status(201).send(`Comment by ${authorname} added`)
+          else {response.status(201).send(`Suggestion by ${authorname} added`)}
         })
         }
         else {

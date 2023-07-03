@@ -59,7 +59,7 @@ const viewUserPosts = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if (result.rowCount != 0) {
+      else if (result.rowCount != 0) {
         response.status(200).json(result.rows)
       }
       else {
@@ -77,7 +77,7 @@ const viewUserPosts = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if(result.rowCount == 1){
+      else if(result.rowCount == 1){
       response.status(200).json(result.rows)
       }
       else {
@@ -92,7 +92,7 @@ const viewUserPosts = async (request, response) => {
       if (error) {
         throw error
       }
-      if(result.rowCount == 1){
+      else if(result.rowCount == 1){
       response.status(200).json(result.rows)
       }
       else {
@@ -125,7 +125,7 @@ const viewUserPosts = async (request, response) => {
             if (error) {
               response.send(error.message)
             }
-            response.status(201).send(`Post with title: ${title} added`)
+            else {response.status(201).send(`Post with title: ${title} added`)}
           })
           }
           else {
@@ -152,12 +152,15 @@ const updatePostInfo = async (request, response) => {
         [title, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return 
+            response.write(error.message)
+             
           }
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
@@ -168,12 +171,15 @@ const updatePostInfo = async (request, response) => {
         [description, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.write(error.message)
+            
           }
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
@@ -184,17 +190,20 @@ const updatePostInfo = async (request, response) => {
         [sightingLocation, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.write(error.message)
+            
           }
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
     }
-    response.status(200).send(`Post with postid: ${postid} modified`)
+    response.end()
 
   } catch(error) {
     response.send(error.message)
@@ -214,12 +223,15 @@ const updatePostClassification = async (request, response) => {
         [_class, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.write(error.message)
+            
           }        
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
@@ -230,12 +242,15 @@ const updatePostClassification = async (request, response) => {
         [order, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.write(error.message)
+            
           }
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
@@ -246,12 +261,14 @@ const updatePostClassification = async (request, response) => {
         [family, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.write(error.message)
           }
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
@@ -262,12 +279,15 @@ const updatePostClassification = async (request, response) => {
         [genus, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.write(error.message)
+            
           }
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
@@ -278,17 +298,20 @@ const updatePostClassification = async (request, response) => {
         [species, postid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.write(error.message)
+            
           }
-          else if (result.rowCount != 1) {
-            response.status(404).send('Post not found')
-            return
+          else if (result.rowCount == 1) {
+            response.write(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.write('Post not found')
           }
         }
       )
     }
-    response.status(200).send(`Post with postid: ${postid} modified`)
+    response.end()
 
   } catch(error) {
     response.send(error.message)
