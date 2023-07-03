@@ -130,29 +130,70 @@ const addIdSuggestion= async(request, response) => {
 }
 }
 
+const acceptIdSuggestion = async(request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const commentid = request.params.commentid
+  const { postid, content } = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+    db.dbConnect().query(
+      'UPDATE comments SET suggestionapproved = TRUE WHERE commentid = $1',
+      [commentid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        else if(result.rowCount == 1){
+          db.dbConnect().query(
+            'UPDATE posts SET title = $1 WHERE postid = $2',
+            [content, postid],
+            (error, result) => {
+              if (error) {
+                response.send(error.message)
+              }
+              else if(result.rowCount == 1){
+              response.status(200).send(`Post with postid: ${postid} modified`)
+              }
+              else {
+                response.status(404).send('Post not found')
+              }
+            }
+          )
+        }
+        else {
+          response.status(404).send('Post not found')
+        }
+      }
+    )
+    
+  } catch(error) {
+    response.send(error.message)
+  }
+}
+
 const updateComment = async(request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
   const { content } = request.body
 
   try {
-    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
-    const userid = result.userid  
-          db.dbConnect().query(
-            'UPDATE comments SET content = $1, edited = TRUE, editedtime = now() WHERE commentid = $2',
-            [content, commentid],
-            (error, result) => {
-              if (error) {
-                response.send(error.message)
-              }
-              if(result.rowCount == 1){
-              response.status(200).send(`Comment with commentid: ${userid} modified`)
-              }
-              else {
-                response.status(404).send('Comment not found')
-              }
-            }
-          )
+    jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'}); 
+    db.dbConnect().query(
+      'UPDATE comments SET content = $1, edited = TRUE, editedtime = now() WHERE commentid = $2',
+      [content, commentid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        else if(result.rowCount == 1){
+        response.status(200).send(`Comment with commentid: ${commentid} modified`)
+        }
+        else {
+          response.status(404).send('Comment not found')
+        }
+      }
+    )
   } catch(error) {
     response.send(error.message)
   }
@@ -167,7 +208,7 @@ const deleteComment = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if (result.rowCount == 1) {
+      else if (result.rowCount == 1) {
         response.status(200).send(`Comment with id: ${commentid} deleted`)
       }
       else {
@@ -189,7 +230,7 @@ const upVoteComment = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if (result.rowCount == 1) {
+      else if (result.rowCount == 1) {
         db.dbConnect().query('INSERT INTO upvotes (commentid, upvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
@@ -219,7 +260,7 @@ const unUpVoteComment = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if (result.rowCount == 1) {
+      else if (result.rowCount == 1) {
         db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
@@ -247,7 +288,7 @@ const downVoteComment = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if (result.rowCount == 1) {
+      else if (result.rowCount == 1) {
         db.dbConnect().query('INSERT INTO downvotes (commentid, downvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
@@ -275,7 +316,7 @@ const unDownVoteComment = async (request, response) => {
       if (error) {
         response.send(error.message)
       }
-      if (result.rowCount == 1) {
+      else if (result.rowCount == 1) {
         db.dbConnect().query('DELETE FROM downvotes WHERE commentid = $1 AND downvoterid = $2', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
@@ -298,6 +339,7 @@ module.exports = {
   viewUserComments,
   addComment,
   addIdSuggestion,
+  acceptIdSuggestion,
   updateComment,
   deleteComment,
   upVoteComment,
