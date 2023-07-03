@@ -12,9 +12,10 @@ dotenv.config()
         if (error) {
           response.send(error.message)
         }
-        if(result.rowCount == 1){
+        else if(result.rowCount == 1){
           response.status(200).json(result.rows)
-        } else {
+        } 
+        else {
           response.status(200).send('Invalid search')
         }
       })
@@ -31,7 +32,7 @@ dotenv.config()
         if (error) {
           response.send(error.message)
         }
-        if(result.rowCount == 1){
+        else if(result.rowCount == 1){
           response.status(200).json(result.rows)
         } else {
           response.status(200).send('Invalid search')
