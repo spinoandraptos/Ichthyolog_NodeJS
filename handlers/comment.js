@@ -145,7 +145,7 @@ const acceptIdSuggestion = async(request, response) => {
           response.send(error.message)
         }
         else if(result.rowCount != 1){
-          dbb.dbConnect().query(
+          db.dbConnect().query(
             'UPDATE comments SET suggestionapproved = TRUE WHERE commentid = $1',
             [commentid],
             (error, result) => {
