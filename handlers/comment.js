@@ -98,6 +98,38 @@ const viewUserComments = async (request, response) => {
   }
 }
 
+const addIdSuggestion= async(request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const { postid, content } = request.body
+
+  try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const userid = result.userid  
+      const authorname = result.username
+      db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        if(result.rowCount == 1){
+          const picture = result.rows[0].profilepic
+          db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime, idsuggestion) VALUES ($1, $2, $3, $4, $5, now(), TRUE)', 
+          [userid, postid, authorname, content, picture], 
+          (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          response.status(201).send(`Comment by ${authorname} added`)
+        })
+        }
+        else {
+          response.status(404).send('User not found')
+        }
+      })
+} catch(error) {
+  response.send(error.message)
+}
+}
+
 const updateComment = async(request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
@@ -265,6 +297,7 @@ module.exports = {
   viewPostComments,
   viewUserComments,
   addComment,
+  addIdSuggestion,
   updateComment,
   deleteComment,
   upVoteComment,
