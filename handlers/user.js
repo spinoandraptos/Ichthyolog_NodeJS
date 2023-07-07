@@ -61,10 +61,10 @@ const viewAnyUserbyID = async(request, response) => {
       response.send(error.message)
     }
   }
-  
-  const updateUserProfile = async(request, response) => {
+
+  const updateUsername = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { username, oldPassword, newPassword, email } = request.body
+    const {username, oldPassword} = request.body
 
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
@@ -82,32 +82,29 @@ const viewAnyUserbyID = async(request, response) => {
                 [username, userid],
                 (error, result) => {
                   if (error) {
-                    console.log(error.message)
-                    response.send(error.message)
-                    return
+                    response.send(error.message)                    
                   }
                   else if(result.rowCount != 1){
-                    response.status(404).send('User not found')
-                    return
+                    response.send('User not found')                   
                   }
                   else {
                     db.dbConnect().query(
                       'UPDATE posts SET authorname = $1 WHERE userid = $2',
                       [username, userid],
-                      (error, result) => {
+                      (error) => {
                         if (error) {
-                          console.log(error.message)
                           response.send(error.message)
-                          return
                         }
                         else {
                           db.dbConnect().query(
                           'UPDATE comments SET authorname = $1 WHERE authorid = $2',
                           [username, userid],
-                          (error, result) => {
+                          (error) => {
                             if (error) {
                               response.send(error.message)
-                              return
+                            }
+                            else {
+                              response.status(200).send('User modified')
                             }
                         })
                         }
@@ -116,6 +113,80 @@ const viewAnyUserbyID = async(request, response) => {
                 }
               )
             }
+          }
+          else {
+            response.send('Incorrect password')
+          }
+        }
+        else {
+          response.send('User not found')
+        }
+    })
+    } catch(error) {
+      response.send(error.message)
+    }
+  }
+
+  const updateUserEmail = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const {email, oldPassword} = request.body
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
+      const userid = result.userid  
+      db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
+        if (error) {
+          response.send(error.message)
+          return
+        }
+        else if(result.rowCount == 1){
+          if (await argon2.verify(result.rows[0].password, oldPassword)){
+            if(email!=''){
+              db.dbConnect().query(
+                'UPDATE users SET email = $1 WHERE userid = $2',
+                [email, userid],
+                (error, result) => {
+                  if (error) {
+                    response.send(error.message)
+                    return
+                  }
+                  else if(result.rowCount != 1){
+                    response.status(404).send('User not found')                   
+                  }
+                  else {
+                    response.status(200).send('User modified')
+                  }
+                }
+              )
+            }
+          }
+          else {
+            response.send('Incorrect password')
+          }
+        }
+        else {
+          response.send('User not found')
+        }
+    })
+    } catch(error) {
+      response.send(error.message)
+    }
+  }
+
+  const updateUserPassword = async(request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const {newPassword, oldPassword} = request.body
+
+    try {
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
+      const userid = result.userid  
+      db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
+        if (error) {
+          response.send(error.message)
+          return
+        }
+        else if(result.rowCount == 1){
+          if (await argon2.verify(result.rows[0].password, oldPassword)){
             if(newPassword!=''){
               const hashedNewPassword = await argon2.hash(newPassword)
               db.dbConnect().query(
@@ -133,23 +204,6 @@ const viewAnyUserbyID = async(request, response) => {
                 }
               )
             }
-            if(email!=''){
-              db.dbConnect().query(
-                'UPDATE users SET email = $1 WHERE userid = $2',
-                [email, userid],
-                (error, result) => {
-                  if (error) {
-                    response.send(error.message)
-                    return
-                  }
-                  else if(result.rowCount != 1){
-                    response.status(404).send('User not found')
-                    return
-                  }
-                }
-              )
-            }
-            response.status(200).send('User modified')
           }
           else {
             response.send('Incorrect password')
@@ -163,7 +217,8 @@ const viewAnyUserbyID = async(request, response) => {
       response.send(error.message)
     }
   }
-
+  
+  
   const updateUserPic = async(request, response) => {
     const jwt_auth = request.get('Authorisation')
     const { profilepic } = request.body
@@ -355,7 +410,9 @@ const viewAnyUserbyID = async(request, response) => {
     viewOwnUser,
     viewAnyUserbyID,
     addUser,
-    updateUserProfile,
+    updateUsername,
+    updateUserPassword,
+    updateUserEmail,
     updateUserPic,
     updateUserLevel,
     updateUserPost,
