@@ -53,7 +53,7 @@ const viewUserPosts = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
 
   try {
-    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     const userid = result.userid
     db.dbConnect().query('SELECT * FROM posts WHERE userid = $1 ORDER BY flagged desc, time desc', [userid], (error, result) => {
       if (error) {
@@ -107,7 +107,7 @@ const viewUserPosts = async (request, response) => {
     const { title, description, sightingLocation, sightingTime, imageURL, _class, order, family, genus, species } = request.body
   
     try {
-        const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+        const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
         db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
@@ -138,182 +138,242 @@ const viewUserPosts = async (request, response) => {
   }
 }
 
-
-const updatePostInfo = async (request, response) => {
+const updatePostTitle = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const { title, description, sightingLocation } = request.body
+  const title = request.body
 
   try {
-    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    if(title!=''){
-      db.dbConnect().query(
-        'UPDATE posts SET title = $1 WHERE postid = $2',
-        [title, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-             
-          }
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
-        }
-      )
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
+    'UPDATE posts SET title = $1 WHERE postid = $2',
+    [title, postid],
+    (error, result) => {
+      if (error) {
+        response.send(error.message)
+         
+      }
+      else if (result.rowCount == 1) {
+        response.send(`Post with postid: ${postid} modified`)
+        
+      } 
+      else{
+        response.send('Post not found')
+      }
     }
-    if(description!=''){
-      db.dbConnect().query(
-        'UPDATE posts SET description = $1 WHERE postid = $2',
-        [description, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-            
-          }
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
-        }
-      )
-    }
-    if(sightingLocation!=''){
-      db.dbConnect().query(
-        'UPDATE posts SET sightinglocation = $1 WHERE postid = $2',
-        [sightingLocation, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-            
-          }
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
-        }
-      )
-    }
-    response.end()
+  )}
+  catch(error) {
+    response.send(error.message)
+  }
 
-  } catch(error) {
+}
+
+const updatePostDescription = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+  const description = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
+    'UPDATE posts SET description = $1 WHERE postid = $2',
+    [description, postid],
+    (error, result) => {
+      if (error) {
+        response.send(error.message)
+         
+      }
+      else if (result.rowCount == 1) {
+        response.send(`Post with postid: ${postid} modified`)
+        
+      } 
+      else{
+        response.send('Post not found')
+      }
+    }
+  )}
+  catch(error) {
+    response.send(error.message)
+  }
+
+}
+
+const updatePostSightingLocation = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+  const sightingLocation = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
+    'UPDATE posts SET sightinglocation = $1 WHERE postid = $2',
+    [sightingLocation, postid],
+    (error, result) => {
+      if (error) {
+        response.send(error.message)
+         
+      }
+      else if (result.rowCount == 1) {
+        response.send(`Post with postid: ${postid} modified`)
+        
+      } 
+      else{
+        response.send('Post not found')
+      }
+    }
+  )}
+  catch(error) {
+    response.send(error.message)
+  }
+
+}
+
+const updatePostClass = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+  const _class = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
+      'UPDATE posts SET class = $1 WHERE postid = $2',
+      [_class, postid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+          
+        }        
+        else if (result.rowCount == 1) {
+          response.send(`Post with postid: ${postid} modified`)
+          
+        } 
+        else{
+          response.send('Post not found')
+        }
+      }
+    )
+  }
+  catch(error) {
     response.send(error.message)
   }
 }
 
-const updatePostClassification = async (request, response) => {
+const updatePostOrder = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const { _class, order, family, genus, species } = request.body
+  const order = request.body
 
   try {
-    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
-    if(_class!=''){
-      db.dbConnect().query(
-        'UPDATE posts SET class = $1 WHERE postid = $2',
-        [_class, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-            
-          }        
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
-        }
-      )
-    }
-    if(order!=''){
-      db.dbConnect().query(
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
         'UPDATE posts SET _order = $1 WHERE postid = $2',
-        [order, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-            
-          }
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
+      [order, postid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+          
+        }        
+        else if (result.rowCount == 1) {
+          response.send(`Post with postid: ${postid} modified`)
+          
+        } 
+        else{
+          response.send('Post not found')
         }
-      )
-    }
-    if(family!=''){
-      db.dbConnect().query(
-        'UPDATE posts SET family = $1 WHERE postid = $2',
-        [family, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-          }
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
-        }
-      )
-    }
-    if(genus!=''){
-      db.dbConnect().query(
-        'UPDATE posts SET genus = $1 WHERE postid = $2',
-        [genus, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-            
-          }
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
-        }
-      )
-    }
-    if(species!=''){
-      db.dbConnect().query(
-        'UPDATE posts SET species = $1 WHERE postid = $2',
-        [species, postid],
-        (error, result) => {
-          if (error) {
-            response.write(error.message)
-            
-          }
-          else if (result.rowCount == 1) {
-            response.write(`Post with postid: ${postid} modified`)
-            
-          } 
-          else{
-            response.write('Post not found')
-          }
-        }
-      )
-    }
-    response.end()
+      }
+    )
+  }
+  catch(error) {
+    response.send(error.message)
+  }
+}
 
-  } catch(error) {
+const updatePostFamily = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+  const family = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
+      'UPDATE posts SET family = $1 WHERE postid = $2',
+      [family, postid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+          
+        }        
+        else if (result.rowCount == 1) {
+          response.send(`Post with postid: ${postid} modified`)
+          
+        } 
+        else{
+          response.send('Post not found')
+        }
+      }
+    )
+  }
+  catch(error) {
+    response.send(error.message)
+  }
+}
+
+const updatePostGenus = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+  const genus = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
+      'UPDATE posts SET genus = $1 WHERE postid = $2',
+      [genus, postid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+          
+        }        
+        else if (result.rowCount == 1) {
+          response.send(`Post with postid: ${postid} modified`)
+          
+        } 
+        else{
+          response.send('Post not found')
+        }
+      }
+    )
+  }
+  catch(error) {
+    response.send(error.message)
+  }
+}
+
+const updatePostSpecies = async (request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const postid = request.params.postid
+  const species = request.body
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    db.dbConnect().query(
+      'UPDATE posts SET species = $1 WHERE postid = $2',
+      [species, postid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+          
+        }        
+        else if (result.rowCount == 1) {
+          response.send(`Post with postid: ${postid} modified`)
+          
+        } 
+        else{
+          response.send('Post not found')
+        }
+      }
+    )
+  }
+  catch(error) {
     response.send(error.message)
   }
 }
@@ -352,7 +412,7 @@ const verifyPost = async (request, response) => {
   const postid = request.params.postid
 
   try {
-    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     db.dbConnect().query('UPDATE posts SET verified = TRUE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
@@ -374,7 +434,7 @@ const flagPost = async (request, response) => {
   const postid = request.params.postid
 
   try {
-    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     db.dbConnect().query('UPDATE posts SET flagged = TRUE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
@@ -396,7 +456,7 @@ const unFlagPost = async (request, response) => {
   const postid = request.params.postid
 
   try {
-    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' });
+    jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     db.dbConnect().query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
@@ -422,8 +482,14 @@ module.exports = {
   viewUserPosts,
   viewPostIdByTitle,
   addPost,
-  updatePostInfo,
-  updatePostClassification,
+  updatePostTitle,
+  updatePostDescription,
+  updatePostSightingLocation,
+  updatePostClass,
+  updatePostOrder,
+  updatePostFamily,
+  updatePostGenus,
+  updatePostSpecies,
   deletePost,
   verifyPost,
   flagPost,

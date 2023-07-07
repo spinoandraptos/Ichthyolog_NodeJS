@@ -9,7 +9,7 @@ dotenv.config()
     const jwt_auth = request.get('Authorisation')
   
     try {
-    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+    const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
     const userid = result.userid  
     db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
       if (error) {
@@ -67,7 +67,7 @@ const viewAnyUserbyID = async(request, response) => {
     const { username, oldPassword, newPassword, email } = request.body
 
     try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
@@ -169,7 +169,7 @@ const viewAnyUserbyID = async(request, response) => {
     const { profilepic } = request.body
 
     try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
       db.dbConnect().query(
         'UPDATE users SET profilepic = $1 WHERE userid = $2',
@@ -217,7 +217,7 @@ const viewAnyUserbyID = async(request, response) => {
     const { level } = request.body
 
     try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
             db.dbConnect().query(
               'UPDATE users SET level = level + $1 WHERE userid = $2',
@@ -244,7 +244,7 @@ const viewAnyUserbyID = async(request, response) => {
     const { post_number } = request.body
 
     try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
             db.dbConnect().query(
               'UPDATE users SET totalposts = totalposts + $1 WHERE userid = $2',
@@ -272,7 +272,7 @@ const viewAnyUserbyID = async(request, response) => {
     const { species_number } = request.body
 
     try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
             db.dbConnect().query(
               'UPDATE users SET speciescount = speciescount + $1 WHERE userid = $2',
@@ -298,7 +298,7 @@ const viewAnyUserbyID = async(request, response) => {
     const jwt_auth = request.get('Authorisation') 
 
     try {
-      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid 
       db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, result) => {
         if (error) {
@@ -325,7 +325,7 @@ const viewAnyUserbyID = async(request, response) => {
       }
       else if(result.rowCount == 1){
         if (await argon2.verify(result.rows[0].password, password)){
-          var token = jwt.sign({username: result.rows[0].username, userid:result.rows[0].userid}, process.env.SECRETKEY, {expiresIn: "3h", algorithm: "HS256"} );
+          var token = jwt.sign({username: result.rows[0].username, userid:result.rows[0].userid}, process.env.SECRETKEY, {expiresIn: "3h", algorithm: "HS256"} )
           response.status(200).send(token)
         }
         else {
@@ -342,7 +342,7 @@ const viewAnyUserbyID = async(request, response) => {
     const jwt_auth = request.get('Authorisation') 
 
     try {
-      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'});
+      jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       response.status(200).send('Valid token')
     } catch(error) {
       response.send(error.message)
