@@ -34,7 +34,8 @@ const users = require('./handlers/user')
 const posts = require('./handlers/post')
 const comments = require('./handlers/comment')
 const statistics = require('./handlers/statistics')
-const votes = require("./handlers/vote")
+const votes = require('./handlers/vote')
+const disputes = require('./handlers/disputes')
 
 //route handlers (users)
 express_server.get('/user', users.viewOwnUser)
@@ -85,6 +86,12 @@ express_server.put('/comment/:commentid/:authorid/unupvote', comments.unUpVoteCo
 express_server.put('/comment/:commentid/:authorid/downvote', comments.downVoteComment)
 express_server.put('/comment/:commentid/:authorid/undownvote', comments.unDownVoteComment)
 express_server.delete('/comment/:commentid', comments.deleteComment)
+
+//route handlers (disputes)
+express_server.get('/disputes/:commentid', disputes.viewCommentDisputes)
+express_server.post('/disputes', disputes.addDispute)
+express_server.put('/disputes/:disputeid', disputes.updateDispute)
+express_server.delete('/disputes/:disputeid', disputes.deleteDispute)
 
 //route handlers (votes)
 express_server.get('/upvotes/:commentid/:authorid', votes.checkUpvoteExists)
