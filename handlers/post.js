@@ -246,7 +246,7 @@ const updatePostSightingLocation = async (request, response) => {
 const updatePostClass = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const _class = request.body.class_
+  const _class = request.body._class
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
