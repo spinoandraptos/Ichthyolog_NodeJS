@@ -72,7 +72,7 @@ const viewAnyUserbyID = async(request, response) => {
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
           response.send(error.message)
-          return
+          
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
@@ -140,7 +140,6 @@ const viewAnyUserbyID = async(request, response) => {
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
           response.send(error.message)
-          return
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
@@ -151,7 +150,6 @@ const viewAnyUserbyID = async(request, response) => {
                 (error, result) => {
                   if (error) {
                     response.send(error.message)
-                    return
                   }
                   else if(result.rowCount != 1){
                     response.status(404).send('User not found')                   
@@ -189,7 +187,6 @@ const viewAnyUserbyID = async(request, response) => {
       db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
           response.send(error.message)
-          return
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
@@ -200,12 +197,13 @@ const viewAnyUserbyID = async(request, response) => {
                 [hashedNewPassword, userid],
                 (error, result) => {
                   if (error) {
-                    response.send(error.message)
-                    return
+                    response.send(error.message)                   
                   }
                   else if(result.rowCount != 1){
-                    response.status(404).send('User not found')
-                    return
+                    response.status(404).send('User not found')                    
+                  }
+                  else {
+                    response.status(200).send('User modified')
                   }
                 }
               )
@@ -240,8 +238,7 @@ const viewAnyUserbyID = async(request, response) => {
         [profilepic, userid],
         (error, result) => {
           if (error) {
-            response.send(error.message)
-            return
+            response.send(error.message)           
           }
           else if(result.rowCount == 1){
             db.dbConnect().query(
@@ -249,8 +246,7 @@ const viewAnyUserbyID = async(request, response) => {
               [profilepic, userid],
               (error) => {
                 if (error) {
-                  response.send(error.message)
-                  return
+                  response.send(error.message)                
                 }
                 else {
                   db.dbConnect().query(
@@ -258,10 +254,10 @@ const viewAnyUserbyID = async(request, response) => {
                   [profilepic, userid],
                   (error) => {
                     if (error) {
-                      response.send(error.message)
-                      return
-                    }
+                      response.send(error.message)                    
+                    } else {
                     response.status(200).send(`User with userid: ${userid} modified`)
+                    }
                 })
               }
              })
