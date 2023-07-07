@@ -88,27 +88,7 @@ const viewAnyUserbyID = async(request, response) => {
                     response.send('User not found')                   
                   }
                   else {
-                    db.dbConnect().query(
-                      'UPDATE posts SET authorname = $1 WHERE userid = $2',
-                      [username, userid],
-                      (error) => {
-                        if (error) {
-                          response.send(error.message)
-                        }
-                        else {
-                          db.dbConnect().query(
-                          'UPDATE comments SET authorname = $1 WHERE authorid = $2',
-                          [username, userid],
-                          (error) => {
-                            if (error) {
-                              response.send(error.message)
-                            }
-                            else {
-                              response.status(200).send('User modified')
-                            }
-                        })
-                        }
-                     })
+                    response.status(200).send('User modified')
                   }
                 }
               )
