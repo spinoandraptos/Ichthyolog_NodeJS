@@ -76,7 +76,7 @@ const viewAnyUserbyID = async(request, response) => {
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
-            if(username!=''){
+            if(username != ''){
               db.dbConnect().query(
                 'UPDATE users SET username = $1 WHERE userid = $2',
                 [username, userid],
@@ -113,6 +113,9 @@ const viewAnyUserbyID = async(request, response) => {
                 }
               )
             }
+            else {
+              response.status(200).send(`No changes made`)
+            }
           }
           else {
             response.send('Incorrect password')
@@ -141,7 +144,7 @@ const viewAnyUserbyID = async(request, response) => {
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
-            if(email!=''){
+            if(email != ''){
               db.dbConnect().query(
                 'UPDATE users SET email = $1 WHERE userid = $2',
                 [email, userid],
@@ -158,6 +161,9 @@ const viewAnyUserbyID = async(request, response) => {
                   }
                 }
               )
+            }
+            else {
+              response.status(200).send(`No changes made`)
             }
           }
           else {
@@ -187,7 +193,7 @@ const viewAnyUserbyID = async(request, response) => {
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
-            if(newPassword!=''){
+            if(newPassword != ''){
               const hashedNewPassword = await argon2.hash(newPassword)
               db.dbConnect().query(
                 'UPDATE users SET password = $1 WHERE userid = $2',
@@ -203,6 +209,9 @@ const viewAnyUserbyID = async(request, response) => {
                   }
                 }
               )
+            }
+            else {
+              response.status(200).send(`No changes made`)
             }
           }
           else {
