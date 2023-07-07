@@ -141,7 +141,7 @@ const viewUserPosts = async (request, response) => {
 const updatePostTitle = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const title = request.body
+  const title = request.body.title
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
@@ -176,7 +176,7 @@ const updatePostTitle = async (request, response) => {
 const updatePostDescription = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const description = request.body
+  const description = request.body.description
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
@@ -211,7 +211,7 @@ const updatePostDescription = async (request, response) => {
 const updatePostSightingLocation = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const sightingLocation = request.body
+  const sightingLocation = request.body.sightingLocation
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
@@ -246,7 +246,7 @@ const updatePostSightingLocation = async (request, response) => {
 const updatePostClass = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const _class = request.body
+  const _class = request.body.class_
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
@@ -281,7 +281,7 @@ const updatePostClass = async (request, response) => {
 const updatePostOrder = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const order = request.body
+  const order = request.body.order
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
@@ -316,7 +316,7 @@ const updatePostOrder = async (request, response) => {
 const updatePostFamily = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const family = request.body
+  const family = request.body.family
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
@@ -351,7 +351,7 @@ const updatePostFamily = async (request, response) => {
 const updatePostGenus = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const genus = request.body
+  const genus = request.body.genus
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
@@ -386,7 +386,7 @@ const updatePostGenus = async (request, response) => {
 const updatePostSpecies = async (request, response) => {
   const jwt_auth = request.get('Authorisation')
   const postid = request.params.postid
-  const species = request.body
+  const species = request.body.species
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
