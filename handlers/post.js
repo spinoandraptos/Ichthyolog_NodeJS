@@ -145,27 +145,32 @@ const updatePostTitle = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query(
-    'UPDATE posts SET title = $1 WHERE postid = $2',
-    [title, postid],
-    (error, result) => {
-      if (error) {
-        response.send(error.message)
-         
-      }
-      else if (result.rowCount == 1) {
-        response.send(`Post with postid: ${postid} modified`)
-        
-      } 
-      else{
-        response.send('Post not found')
-      }
+    if(title != ''){
+      db.dbConnect().query(
+        'UPDATE posts SET title = $1 WHERE postid = $2',
+        [title, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
+        }
+      )
     }
-  )}
+    else {
+      response.status(200).send(`No changes made`)
+    }
+  }
   catch(error) {
     response.send(error.message)
   }
-
 }
 
 const updatePostDescription = async (request, response) => {
@@ -175,27 +180,32 @@ const updatePostDescription = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+    if(description != ''){
     db.dbConnect().query(
-    'UPDATE posts SET description = $1 WHERE postid = $2',
-    [description, postid],
-    (error, result) => {
-      if (error) {
-        response.send(error.message)
-         
-      }
-      else if (result.rowCount == 1) {
-        response.send(`Post with postid: ${postid} modified`)
-        
-      } 
-      else{
-        response.send('Post not found')
-      }
+      'UPDATE posts SET description = $1 WHERE postid = $2',
+      [description, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
+        }
+      )
     }
-  )}
+    else {
+      response.status(200).send(`No changes made`)
+    }
+  }
   catch(error) {
     response.send(error.message)
   }
-
 }
 
 const updatePostSightingLocation = async (request, response) => {
@@ -205,27 +215,32 @@ const updatePostSightingLocation = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query(
-    'UPDATE posts SET sightinglocation = $1 WHERE postid = $2',
-    [sightingLocation, postid],
-    (error, result) => {
-      if (error) {
-        response.send(error.message)
-         
-      }
-      else if (result.rowCount == 1) {
-        response.send(`Post with postid: ${postid} modified`)
-        
-      } 
-      else{
-        response.send('Post not found')
-      }
+    if(sightingLocation != ''){
+      db.dbConnect().query(
+        'UPDATE posts SET sightinglocation = $1 WHERE postid = $2',
+        [sightingLocation, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
+        }
+      )
     }
-  )}
+    else {
+      response.status(200).send(`No changes made`)
+    }
+  }
   catch(error) {
     response.send(error.message)
   }
-
 }
 
 const updatePostClass = async (request, response) => {
@@ -235,23 +250,28 @@ const updatePostClass = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query(
-      'UPDATE posts SET class = $1 WHERE postid = $2',
-      [_class, postid],
-      (error, result) => {
-        if (error) {
-          response.send(error.message)
-          
-        }        
-        else if (result.rowCount == 1) {
-          response.send(`Post with postid: ${postid} modified`)
-          
-        } 
-        else{
-          response.send('Post not found')
+    if(_class != ''){
+      db.dbConnect().query(
+        'UPDATE posts SET class = $1 WHERE postid = $2',
+        [_class, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }        
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
         }
-      }
-    )
+      )
+    }
+    else {
+      response.status(200).send(`No changes made`)
+    }
   }
   catch(error) {
     response.send(error.message)
@@ -265,23 +285,28 @@ const updatePostOrder = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query(
+    if(order != ''){
+      db.dbConnect().query(
         'UPDATE posts SET _order = $1 WHERE postid = $2',
-      [order, postid],
-      (error, result) => {
-        if (error) {
-          response.send(error.message)
-          
-        }        
-        else if (result.rowCount == 1) {
-          response.send(`Post with postid: ${postid} modified`)
-          
-        } 
-        else{
-          response.send('Post not found')
+        [order, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }        
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
         }
-      }
-    )
+      )
+    }
+    else {
+      response.status(200).send(`No changes made`)
+    }
   }
   catch(error) {
     response.send(error.message)
@@ -295,23 +320,28 @@ const updatePostFamily = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query(
-      'UPDATE posts SET family = $1 WHERE postid = $2',
-      [family, postid],
-      (error, result) => {
-        if (error) {
-          response.send(error.message)
-          
-        }        
-        else if (result.rowCount == 1) {
-          response.send(`Post with postid: ${postid} modified`)
-          
-        } 
-        else{
-          response.send('Post not found')
+    if(family != ''){
+      db.dbConnect().query(
+        'UPDATE posts SET family = $1 WHERE postid = $2',
+        [family, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }        
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
         }
-      }
-    )
+      )
+    }
+    else {
+      response.status(200).send(`No changes made`)
+    }
   }
   catch(error) {
     response.send(error.message)
@@ -325,23 +355,28 @@ const updatePostGenus = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query(
-      'UPDATE posts SET genus = $1 WHERE postid = $2',
-      [genus, postid],
-      (error, result) => {
-        if (error) {
-          response.send(error.message)
-          
-        }        
-        else if (result.rowCount == 1) {
-          response.send(`Post with postid: ${postid} modified`)
-          
-        } 
-        else{
-          response.send('Post not found')
+    if(genus != ''){
+      db.dbConnect().query(
+        'UPDATE posts SET genus = $1 WHERE postid = $2',
+        [genus, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }        
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
         }
-      }
-    )
+      )
+    }
+    else {
+      response.status(200).send(`No changes made`)
+    }
   }
   catch(error) {
     response.send(error.message)
@@ -355,23 +390,28 @@ const updatePostSpecies = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query(
-      'UPDATE posts SET species = $1 WHERE postid = $2',
-      [species, postid],
-      (error, result) => {
-        if (error) {
-          response.send(error.message)
-          
-        }        
-        else if (result.rowCount == 1) {
-          response.send(`Post with postid: ${postid} modified`)
-          
-        } 
-        else{
-          response.send('Post not found')
+    if(species != ''){
+      db.dbConnect().query(
+        'UPDATE posts SET species = $1 WHERE postid = $2',
+        [species, postid],
+        (error, result) => {
+          if (error) {
+            response.send(error.message)
+            
+          }        
+          else if (result.rowCount == 1) {
+            response.status(200).send(`Post with postid: ${postid} modified`)
+            
+          } 
+          else{
+            response.send('Post not found')
+          }
         }
-      }
-    )
+      )
+    }
+    else {
+      response.status(200).send(`No changes made`)
+    }
   }
   catch(error) {
     response.send(error.message)
