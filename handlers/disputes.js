@@ -7,7 +7,6 @@ const viewCommentDisputes = async (request, response) => {
     const commentid = request.params.commentid
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      const userid = result.userid
       db.dbConnect().query('SELECT * FROM disputes WHERE commentid = $1', [commentid], (error, result) => {
         if (error) {
           response.send(error.message)
