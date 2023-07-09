@@ -89,11 +89,11 @@ express_server.put('/comment/:commentid/:authorid/undownvote', comments.unDownVo
 express_server.delete('/comment/:commentid', comments.deleteComment)
 
 //route handlers (disputes)
-express_server.get('/disputes/:commentid', disputes.viewCommentDisputes)
+express_server.get('/:commentid/disputes', disputes.viewCommentDisputes)
 express_server.post('/disputes', disputes.addDispute)
 express_server.put('/disputes/:disputeid', disputes.updateDispute)
-express_server.delete('/disputes/:disputeid', disputes.deleteDispute)
-express_server.put(':commentid/disputes/:disputeid/approve', disputes.approveDispute)
+express_server.delete('/:commentid/disputes/:disputeid', disputes.deleteDispute)
+express_server.put('/:commentid/disputes/:disputeid/approve', disputes.approveDispute)
 
 //route handlers (votes)
 express_server.get('/upvotes/:commentid/:authorid', votes.checkUpvoteExists)
