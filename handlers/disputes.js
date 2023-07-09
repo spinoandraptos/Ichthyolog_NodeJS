@@ -121,7 +121,7 @@ const updateDispute = async(request, response) => {
               response.send(error.message)
             }
             else if(result.rowCount == 1) {
-              db.dbConnect().query('UPDATE posts SET verified = FALSE WHERE postid = $2', [postid], (error, result) => {
+              db.dbConnect().query('UPDATE posts SET verified = FALSE WHERE postid = $1', [postid], (error, result) => {
                 if (error) {
                   response.send(error.message)
                 }
