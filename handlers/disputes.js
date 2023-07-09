@@ -134,7 +134,7 @@ const updateDispute = async(request, response) => {
               })
             }
             else {
-              response.status(404).send('Comment not found')
+              response.status(404).send('ID suggestion not found')
             }
          })
         }
