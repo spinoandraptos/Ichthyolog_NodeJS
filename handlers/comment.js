@@ -198,7 +198,7 @@ const rejectIdSuggestion = async(request, response) => {
         if (error) {
           response.send(error.message)
         }
-        else if(result.rowCount != 1){
+        else if(result.rowCount == 1){
           response.status(200).send(`Suggestion with id ${commentid} rejected`)
         }
         else {
