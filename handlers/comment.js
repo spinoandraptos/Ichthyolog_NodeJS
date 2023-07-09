@@ -185,6 +185,32 @@ const acceptIdSuggestion = async(request, response) => {
   }
 }
 
+const rejectIdSuggestion = async(request, response) => {
+  const jwt_auth = request.get('Authorisation')
+  const commentid = request.params.commentid
+
+  try {
+    jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
+    db.dbConnect().query(
+      'UPDATE comments SET suggestionrejected = TRUE WHERE commentid = $1',
+      [commentid],
+      (error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        else if(result.rowCount != 1){
+          response.status(200).send(`Suggestion with id ${commentid} rejected`)
+        }
+        else {
+          response.status(404).send('Suggestion not found')
+        }
+      }
+    )   
+  } catch(error) {
+    response.send(error.message)
+  }
+}
+
 const updateComment = async(request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
@@ -353,6 +379,7 @@ module.exports = {
   addComment,
   addIdSuggestion,
   acceptIdSuggestion,
+  rejectIdSuggestion,
   updateComment,
   deleteComment,
   upVoteComment,

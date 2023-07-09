@@ -103,10 +103,55 @@ const updateDispute = async(request, response) => {
     }
   }
 
+  const approveDispute = async (request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const disputeid = request.params.disputeid
+    const commentid = request.params.commentid
+    const postid = request.body.postid
+
+    try {
+      jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+      db.dbConnect().query('UPDATE disputes SET disputeapproved = TRUE WHERE disputeid = $1', [disputeid], (error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        else if(result.rowCount == 1){
+          db.dbConnect().query('UPDATE comments SET idreplaced = TRUE WHERE commentid = $1', [commentid], (error, result) => {
+            if (error) {
+              response.send(error.message)
+            }
+            else if(result.rowCount == 1) {
+              db.dbConnect().query('UPDATE posts SET verified = FALSE WHERE postid = $2', [postid], (error, result) => {
+                if (error) {
+                  response.send(error.message)
+                }
+                else if(result.rowCount == 1) {
+                  response.status(200).send(`Dispute with disputeid ${disputeid} approved`)
+                }
+                else {
+                  response.status(404).send('Post not found')
+                }
+              })
+            }
+            else {
+              response.status(404).send('Comment not found')
+            }
+         })
+        }
+        else {
+            response.status(404).send('Dispute not found')
+        }
+      })
+    } catch(error) {
+      response.send(error.message)
+    }
+  }
+
 
 module.exports = {
     viewCommentDisputes,
     addDispute,
     updateDispute,
-    deleteDispute
+    deleteDispute,
+    approveDispute
 }
