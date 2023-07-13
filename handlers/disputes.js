@@ -110,6 +110,7 @@ const updateDispute = async(request, response) => {
         }
         else if(result.rowCount == 1){
           db.dbConnect().query('SELECT * FROM disputes WHERE commentid = $1', [commentid], (error, result) => {
+            console.log(result.rowCount)
             if (error) {
               response.send(error.message)
             }
@@ -122,7 +123,7 @@ const updateDispute = async(request, response) => {
                     response.send(error.message)
                   }
                   else if(result.rowCount == 1){
-                    response.status(200).send(`Dispute with disputeid: ${disputeid} modified`)
+                    response.status(200).send(`Dispute with disputeid: ${disputeid} modified and status changed`)
                   }
                   else {
                     response.status(404).send('Comment not found')
