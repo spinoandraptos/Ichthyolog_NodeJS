@@ -154,7 +154,7 @@ const acceptIdSuggestion = async(request, response) => {
               }
               else if(result.rowCount == 1){
                 db.dbConnect().query(
-                  'UPDATE posts SET title = $1, verified = TRUE WHERE postid = $2',
+                  'UPDATE posts SET title = $1, verified = TRUE, flagged = FALSE WHERE postid = $2',
                   [content, postid],
                   (error, result) => {
                     if (error) {
