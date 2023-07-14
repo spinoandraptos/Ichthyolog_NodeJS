@@ -138,7 +138,7 @@ const acceptIdSuggestion = async(request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
     db.dbConnect().query(
-      'SELECT FROM comments WHERE postid = $1 AND suggestionapproved = TRUE',
+      'SELECT FROM comments WHERE postid = $1 AND suggestionapproved = TRUE AND idreplaced = FALSE AND suggestionrejected = FALSE',
       [postid],
       (error, result) => {
         if (error) {
