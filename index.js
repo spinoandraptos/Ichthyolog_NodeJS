@@ -36,6 +36,7 @@ const comments = require('./handlers/comment')
 const statistics = require('./handlers/statistics')
 const votes = require('./handlers/vote')
 const disputes = require('./handlers/disputes')
+const applications = require('./handlers/expertapplication')
 
 //route handlers (users)
 express_server.get('/user', users.viewOwnUser)
@@ -98,6 +99,11 @@ express_server.put('/:commentid/disputes/:disputeid/approve', disputes.approveDi
 //route handlers (votes)
 express_server.get('/upvotes/:commentid/:authorid', votes.checkUpvoteExists)
 express_server.get('/downvotes/:commentid/:authorid', votes.checkDownvoteExists)
+
+//route handlers (expert applications)
+express_server.get('/expertapplications', applications.viewExpertApplications)
+express_server.post('/expertapplications', applications.addExpertApplication)
+express_server.delete('/expertapplications/:applicationid', applications.deleteExpertApplication)
 
 //route handlers (statistics)
 express_server.get('/statistics/species/:species', statistics.searchSpecies)

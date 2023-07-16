@@ -5,48 +5,60 @@ const jwt = require('jsonwebtoken')
 dotenv.config()
 
 const viewAllPosts = async (request, response) => {
-
-  db.dbConnect().query('SELECT * FROM posts ORDER BY flagged desc, time desc ', (error, result) => {
-    if (error) {
-      response.send(error.message)
-    }
-    else if (result.rowCount != 0) {
-      response.status(200).json(result.rows)
-    }
-    else {
-      response.status(404).send('Posts not found')
-    }
-  })
+  try{
+    db.dbConnect().query('SELECT * FROM posts ORDER BY flagged desc, time desc ', (error, result) => {
+      if (error) {
+        response.send(error.message)
+      }
+      else if (result.rowCount != 0) {
+        response.status(200).json(result.rows)
+      }
+      else {
+        response.status(404).send('Posts not found')
+      }
+    })
+  }
+  catch(error) {
+    response.send(error.message)
+  }
 }
 
 const viewAllVerifiedPosts = async (request, response) => {
-
-  db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY flagged desc, time desc', (error, result) => {
-    if (error) {
-      response.send(error.message)
-    }
-    else if (result.rowCount != 0) {
-      response.status(200).json(result.rows)
-    }
-    else {
-      response.status(404).send('Posts not found')
-    }
-  })
+  try{
+    db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY flagged desc, time desc', (error, result) => {
+      if (error) {
+        response.send(error.message)
+      }
+      else if (result.rowCount != 0) {
+        response.status(200).json(result.rows)
+      }
+      else {
+        response.status(404).send('Posts not found')
+      }
+    })
+  }
+  catch(error) {
+    response.send(error.message)
+  }
 }
 
 const viewAllUnverifiedPosts = async (request, response) => {
-
-  db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY flagged desc, time desc', (error, result) => {
-    if (error) {
-      response.send(error.message)
-    }
-    else if (result.rowCount != 0) {
-      response.status(200).json(result.rows)
-    }
-    else {
-      response.status(404).send('Posts not found')
-    }
-  })
+  try{
+    db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY flagged desc, time desc', (error, result) => {
+      if (error) {
+        response.send(error.message)
+      }
+      else if (result.rowCount != 0) {
+        response.status(200).json(result.rows)
+      }
+      else {
+        response.status(404).send('Posts not found')
+      }
+    })
+  }
+  catch(error) {
+    response.send(error.message)
+  }
 }
 
 const viewUserPosts = async (request, response) => {
