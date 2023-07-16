@@ -49,14 +49,14 @@ const viewOwnExpertApplications = async (request, response) => {
 
 const addExpertApplication= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { age, gender, occupation, email, contact, title, credentials } = request.body
+    const { age, gender, occupation, email, contact, credentials } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
-            db.dbConnect().query('INSERT INTO expertapplicationrequests (authorid, authorname, email, contact, occupation, credentials, gender, age, title, postedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now())', 
-            [userid, authorname, email, contact, occupation, credentials, gender, age, title], 
+            db.dbConnect().query('INSERT INTO expertapplicationrequests (authorid, authorname, email, contact, occupation, credentials, gender, age, postedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())', 
+            [userid, authorname, email, contact, occupation, credentials, gender, age], 
             (error, result) => {
             if (error) {
               response.send(error.message)
@@ -90,9 +90,31 @@ const deleteExpertApplication = async (request, response) => {
     }
   }
 
+  const promoteUserToExpert = async (request, response) => {
+    const jwt_auth = request.get('Authorisation')
+    const authorid = request.params.authorid
+    try {
+      jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+      db.dbConnect().query('UPDATE users SET expert = TRUE WHERE userid = $1', [authorid], (error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        else if (result.rowCount == 1) {
+          response.status(200).send(`User with id: ${authorid} promote`)
+        }
+        else {
+          response.status(404).send('User not found')
+        }
+      })
+    } catch(error) {
+      response.send(error.message)
+    }
+  }
+
   module.exports = {
     viewAllExpertApplications,
     viewOwnExpertApplications,
     addExpertApplication,
-    deleteExpertApplication
+    deleteExpertApplication,
+    promoteUserToExpert
 }
