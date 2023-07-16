@@ -306,8 +306,94 @@ ORDER BY gs.hour_interval ASC
     }
   };
   
+  const getSpeciesCountWeek = async (request, response) => {
+    try {
+      const species = request.params.species;
+      
+      const query = `
+        SELECT gs.day,
+               COALESCE(counts.sightings_count, 0) AS sightings_count
+        FROM (
+          SELECT generate_series(
+                   CURRENT_DATE - INTERVAL '6 days',
+                   CURRENT_DATE,
+                   '1 day'
+                 ) AS day
+        ) AS gs
+        LEFT JOIN (
+          SELECT DATE_TRUNC('day', sightingtime) AS day,
+                 COUNT(*) AS sightings_count
+          FROM posts
+          WHERE title = $1
+            AND sightingtime >= CURRENT_DATE - INTERVAL '6 days'
+            AND sightingtime <= CURRENT_DATE
+            AND verified = true
+          GROUP BY DATE_TRUNC('day', sightingtime)
+        ) AS counts ON gs.day = counts.day
+        ORDER BY gs.day ASC
+      `;
+      
+      const values = [species];
+      
+      db.dbConnect().query(query, values, (error, result) => {
+        if (error) {
+          console.error('Error executing query:', error);
+          response.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+        
+        response.status(200).json(result.rows);
+      });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  };
   
-
+  const getSpeciesCountMonth = async (request, response) => {
+    try {
+      const species = request.params.species;
+      
+      const query = `
+        SELECT gs.day,
+               COALESCE(counts.sightings_count, 0) AS sightings_count
+        FROM (
+          SELECT generate_series(
+                   DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month',
+                   DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 day'),
+                   '1 day'
+                 ) AS day
+        ) AS gs
+        LEFT JOIN (
+          SELECT DATE_TRUNC('day', sightingtime) AS day,
+                 COUNT(*) AS sightings_count
+          FROM posts
+          WHERE title = $1
+            AND sightingtime >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month'
+            AND sightingtime <= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 day')
+            AND verified = true
+          GROUP BY DATE_TRUNC('day', sightingtime)
+        ) AS counts ON gs.day = counts.day
+        ORDER BY gs.day ASC
+      `;
+      
+      const values = [species];
+      
+      db.dbConnect().query(query, values, (error, result) => {
+        if (error) {
+          console.error('Error executing query:', error);
+          response.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+        
+        response.status(200).json(result.rows);
+      });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      response.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
 
 
 module.exports = {
@@ -320,5 +406,7 @@ module.exports = {
     searchClassCatalogue,
     searchOrderCatalogue,
     searchGenusCatalogue,
-    getSpeciesSightingsByHour
+    getSpeciesSightingsByHour,
+    getSpeciesCountWeek,
+    getSpeciesCountMonth
 }
