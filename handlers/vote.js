@@ -1,6 +1,5 @@
 const db = require('../database')
 const dotenv = require('dotenv')
-const jwt = require('jsonwebtoken')
 
 dotenv.config()
 
@@ -8,13 +7,14 @@ dotenv.config()
     const commentid = request.params.commentid
     const authorid = request.params.authorid
       try {
-      db.dbConnect().query('SELECT EXISTS (SELECT * FROM upvotes WHERE commentid = $1 AND upvoterid = $2)', [commentid, authorid], (error, result) => {
+      db.dbConnect().query('SELECT * FROM upvotes WHERE commentid = $1 AND upvoterid = $2', [commentid, authorid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
-        if(result.rowCount == 1){
+        else if(result.rowCount == 1){
           response.status(200).json(result.rows)
-        } else {
+        } 
+        else {
           response.status(200).send('Invalid search')
         }
       })
@@ -27,11 +27,11 @@ dotenv.config()
     const commentid = request.params.commentid
     const authorid = request.params.authorid
       try {
-      db.dbConnect().query('SELECT EXISTS (SELECT * FROM downvotes WHERE commentid = $1 AND downvoterid = $2)', [commentid, authorid], (error, result) => {
+      db.dbConnect().query('SELECT * FROM downvotes WHERE commentid = $1 AND downvoterid = $2', [commentid, authorid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
-        if(result.rowCount == 1){
+        else if(result.rowCount == 1){
           response.status(200).json(result.rows)
         } else {
           response.status(200).send('Invalid search')
