@@ -101,7 +101,8 @@ express_server.get('/upvotes/:commentid/:authorid', votes.checkUpvoteExists)
 express_server.get('/downvotes/:commentid/:authorid', votes.checkDownvoteExists)
 
 //route handlers (expert applications)
-express_server.get('/expertapplications', applications.viewExpertApplications)
+express_server.get('/expertapplications', applications.viewAllExpertApplications)
+express_server.get('/:authorid/expertapplications', applications.viewOwnExpertApplications)
 express_server.post('/expertapplications', applications.addExpertApplication)
 express_server.delete('/expertapplications/:applicationid', applications.deleteExpertApplication)
 

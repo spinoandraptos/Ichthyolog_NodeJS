@@ -4,11 +4,33 @@ const jwt = require('jsonwebtoken')
 
 dotenv.config()
 
-const viewExpertApplications = async (request, response) => {
+const viewAllExpertApplications = async (request, response) => {
     const jwt_auth = request.get('Authorisation')
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('SELECT * FROM expertapplicationrequests ORDER BY postedtime desc', (error, result) => {
+      db.dbConnect().query('SELECT * FROM expertapplicationrequests ORDER BY approved desc, postedtime desc', (error, result) => {
+        if (error) {
+          response.send(error.message)
+        }
+        else if (result.rowCount != 0) {
+          response.status(200).json(result.rows)
+        }
+        else {
+          response.status(404).send('Applications not found')
+        }
+      })
+    }
+    catch(error) {
+        response.send(error.message)
+      }
+}   
+
+const viewOwnExpertApplications = async (request, response) => {
+    const authorid = request.params.authorid
+    const jwt_auth = request.get('Authorisation')
+    try {
+      jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+      db.dbConnect().query('SELECT * FROM expertapplicationrequests ORDER BY approved desc, postedtime desc WHERE authorid = $1',[authorid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -69,7 +91,8 @@ const deleteExpertApplication = async (request, response) => {
   }
 
   module.exports = {
-    viewExpertApplications,
+    viewAllExpertApplications,
+    viewOwnExpertApplications,
     addExpertApplication,
     deleteExpertApplication
 }
