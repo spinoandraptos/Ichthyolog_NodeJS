@@ -127,7 +127,7 @@ const deleteExpertApplication = async (request, response) => {
     const rejectionreason = request.body.rejectionreason
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('UPDATE expertapplicationrequests SET approved = FALSE, rejectionreason = $1 WHERE applicationid = $2', [applicationid, rejectionreason], (error, result) => {
+      db.dbConnect().query('UPDATE expertapplicationrequests SET approved = FALSE, rejectionreason = $1 WHERE applicationid = $2', [rejectionreason, applicationid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
