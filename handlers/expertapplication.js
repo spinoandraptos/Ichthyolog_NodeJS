@@ -30,7 +30,7 @@ const viewOwnExpertApplications = async (request, response) => {
     const jwt_auth = request.get('Authorisation')
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('SELECT * FROM expertapplicationrequests ORDER BY approved desc, postedtime desc WHERE authorid = $1',[authorid], (error, result) => {
+      db.dbConnect().query('SELECT * FROM expertapplicationrequests WHERE authorid = $1 ORDER BY approved desc, postedtime desc',[authorid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
