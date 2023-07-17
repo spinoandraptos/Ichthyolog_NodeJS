@@ -60,7 +60,7 @@ const addExpertApplication= async(request, response) => {
             if (error) {
               response.send(error.message)
             }
-            else {response.status(201).send(`Application by ${authorname} added`)}
+            else {response.status(201).send(`Application by ${name} added`)}
           })
     }
    catch(error) {
