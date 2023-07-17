@@ -127,17 +127,12 @@ const deleteExpertApplication = async (request, response) => {
     const rejectionreason = request.body.rejectionreason
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('UPDATE expertapplicationrequests SET approved = FALSE WHERE applicationid = $1', [applicationid], (error, result) => {
+      db.dbConnect().query('UPDATE expertapplicationrequests SET approved = FALSE, rejectionreason = $1 WHERE applicationid = $2', [applicationid, rejectionreason], (error, result) => {
         if (error) {
           response.send(error.message)
         }
         else if (result.rowCount == 1) {
-          db.dbConnect().query('INSERT INTO expertapplicationrequests (rejectionreason) VALUES ($1)', [rejectionreason], (error, result) => {
-            if (error) {
-              response.send(error.message)
-            }
-            response.status(200).send(`Application with id: ${applicationid} rejected`)
-          })
+          response.status(200).send(`Application with id: ${applicationid} rejected`)
         }
         else {
           response.status(404).send('Application not found')
