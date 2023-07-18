@@ -369,8 +369,8 @@ ORDER BY gs.hour_interval ASC
                  COUNT(*) AS sightings_count
           FROM posts
           WHERE title = $1
-            AND sightingtime >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month'
-            AND sightingtime <= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 day')
+            AND sightingtime >= CURRENT_DATE - INTERVAL '29 days'
+            AND sightingtime <= CURRENT_DATE 
             AND verified = true
           GROUP BY DATE_TRUNC('day', sightingtime)
         ) AS counts ON gs.day = counts.day
