@@ -355,26 +355,27 @@ ORDER BY gs.hour_interval ASC
       const species = request.params.species;
       
       const query = `
-      SELECT gs.day,
-      COALESCE(counts.sightings_count, 0) AS sightings_count
+      SELECT gs.date,
+       COALESCE(counts.sightings_count, 0) AS species_count
 FROM (
- SELECT generate_series(
-          CURRENT_DATE - INTERVAL '29 days',
-          CURRENT_DATE,
-          '1 day'
-        ) AS day
+  SELECT generate_series(
+           CURRENT_DATE - INTERVAL '29 days',
+           CURRENT_DATE,
+           '1 day'
+         ) AS date
 ) AS gs
 LEFT JOIN (
- SELECT DATE_TRUNC('day', sightingtime) AS day,
-        COUNT(*) AS sightings_count
- FROM posts
- WHERE title = $1
-   AND sightingtime >= CURRENT_DATE - INTERVAL '29 days'
-   AND sightingtime <= CURRENT_DATE
-   AND verified = true
- GROUP BY DATE_TRUNC('day', sightingtime)
-) AS counts ON gs.day = counts.day
-ORDER BY gs.day ASC
+  SELECT DATE_TRUNC('day', sightingtime) AS date,
+         COUNT(*) AS sightings_count
+  FROM posts
+  WHERE title = $1
+    AND sightingtime >= CURRENT_DATE - INTERVAL '29 days'
+    AND sightingtime <= CURRENT_DATE
+    AND verified = true
+  GROUP BY DATE_TRUNC('day', sightingtime)
+) AS counts ON gs.date = counts.date
+ORDER BY gs.date ASC;
+
       `;
       
       const values = [species];
