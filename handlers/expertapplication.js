@@ -68,7 +68,7 @@ const addExpertApplication= async(request, response) => {
             else {response.status(201).send(`Application by ${name} added`)}
           })
           }
-          else if (result.rowCount == 0) {
+          else if (result.rowCount != 0) {
             response.send(`Existing requests need to be processed`)
           }
           else {
