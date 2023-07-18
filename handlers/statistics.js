@@ -359,7 +359,7 @@ ORDER BY gs.hour_interval ASC
       COALESCE(counts.sightings_count, 0) AS sightings_count
 FROM (
  SELECT generate_series(
-          CURRENT_DATE - INTERVAL '6 days',
+          CURRENT_DATE - INTERVAL '29 days',
           CURRENT_DATE,
           '1 day'
         ) AS day
