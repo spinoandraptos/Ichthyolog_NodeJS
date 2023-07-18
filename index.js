@@ -119,6 +119,8 @@ express_server.get('/catalogue/order', statistics.searchOrderCatalogue)
 express_server.get('/catalogue/genus', statistics.searchGenusCatalogue)
 express_server.get('/catalogue/class', statistics.searchClassCatalogue)
 express_server.get('/statistics/hour/:species', statistics.getSpeciesSightingsByHour)
+express_server.get('/statistics/week/:species', statistics.getSpeciesCountWeek)
+express_server.get('/statistics/month/:species', statistics.getSpeciesCountMonth)
 
 
 
