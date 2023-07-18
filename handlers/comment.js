@@ -188,12 +188,13 @@ const acceptIdSuggestion = async(request, response) => {
 const rejectIdSuggestion = async(request, response) => {
   const jwt_auth = request.get('Authorisation')
   const commentid = request.params.commentid
+  const rejectionreason = request.body.rejectionreason
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
     db.dbConnect().query(
-      'UPDATE comments SET suggestionrejected = TRUE WHERE commentid = $1',
-      [commentid],
+      'UPDATE comments SET suggestionrejected = TRUE, idrejectionreason = $1 WHERE commentid = $2',
+      [rejectionreason, commentid],
       (error, result) => {
         if (error) {
           response.send(error.message)
