@@ -54,6 +54,11 @@ const addExpertApplication= async(request, response) => {
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
+        db.dbConnect().query('SELECT * FROM expertapplicationrequests WHERE authorid = $1 AND approved IS NOT FALSE ',[userid], (error, result) => {
+          if (error) {
+            response.send(error.message)
+          }
+          else if (result.rowCount == 0) {
             db.dbConnect().query('INSERT INTO expertapplicationrequests (authorid, authorname, email, contact, occupation, credentials, gender, age, postedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())', 
             [userid, name, email, contact, occupation, credentials, gender, age], 
             (error, result) => {
@@ -62,6 +67,14 @@ const addExpertApplication= async(request, response) => {
             }
             else {response.status(201).send(`Application by ${name} added`)}
           })
+          }
+          else if (result.rowCount == 0) {
+            response.send(`Existing requests need to be processed`)
+          }
+          else {
+            response.status(404).send('Applications not found')
+          }
+      })
     }
    catch(error) {
     response.send(error.message)
