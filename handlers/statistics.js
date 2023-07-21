@@ -3,6 +3,37 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 
+const searchSpeciesName = async (request, response) => {
+  try {
+      const species = request.params.species
+
+      const query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE title ILIKE $1
+        AND verified = true
+      ORDER BY title ASC
+    `
+
+      const values = [`%${species}%`]
+
+      db.dbConnect().query(query, values, (error, result) => {
+          if (error) {
+              response.send(error.message)
+          }
+
+          if (result.rowCount > 0) {
+              response.status(200).json(result.rows)
+          } else {
+              response.status(404).send('No entries found')
+          }
+      })
+  } catch(error) {
+      console.error('Error executing query:', error)
+      response.status(500).json({ error: 'Internal server error' })
+  }
+}
+
 const searchSpecies = async (request, response) => {
   try {
       const { species, startTime, endTime, sightingLocation } = request.query;
@@ -400,6 +431,7 @@ ORDER BY gs.date ASC;
 
 
 module.exports = {
+    searchSpeciesName,
     searchSpecies,
     searchClass,
     searchOrder,
