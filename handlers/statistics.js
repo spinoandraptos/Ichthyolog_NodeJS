@@ -10,7 +10,7 @@ const searchSpecies = async (request, response) => {
         let query = `
         SELECT COUNT(*) AS count, MAX(sightingtime) AS latest_sightingtime,
           (SELECT sightinglocation FROM posts
-           WHERE title = $1 AND verified = true
+           WHERE title ILIKE '%$1%' AND verified = true
              AND sightingtime >= $2 AND sightingtime <= $3
         `
   
@@ -25,7 +25,7 @@ const searchSpecies = async (request, response) => {
            ORDER BY sightingtime DESC
            LIMIT 1) AS latest_sightinglocation
         FROM posts
-        WHERE title = $1 AND verified = true
+        WHERE title ILIKE '%$1%' AND verified = true
         AND sightingtime >= $2 AND sightingtime <= $3
         `
 
