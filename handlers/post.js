@@ -142,17 +142,7 @@ const viewUserPosts = async (request, response) => {
                 response.send(error.message)
               }
               else {
-                db.dbConnect().query('UPDATE users SET totalposts = $2, level = $3 WHERE userid = $1'), [userid, totalposts, level], (error, result) => {
-                  if (error) {
-                    response.send(error.message)
-                  }
-                  else if(result.rowCount == 1) {
-                    response.status(201).send(`Post with title: ${title} added`)
-                  }
-                  else {
-                    response.status(404).send('User not found')
-                  }
-                }
+                response.status(201).send(`Post with title: ${title} added`)
               }
             })
           }
@@ -458,26 +448,8 @@ const deletePost = async (request, response) => {
         response.send(error.message)
       }
       else if (result.rowCount == 1) {
-        if (error) {
-          response.send(error.message)
-        }
-        db.dbConnect().query(
-          'UPDATE users SET level = level - 1, totalposts = totalposts - 1 WHERE userid = $1'), [userid], (error, result) => {
-            if (error) {
-              response.send(error.message)
-            }
-            else if (result.rowCount == 1) {
-              if (error) {
-                response.send(error.message)
-              }
-              else {
-                response.status(200).send(`Post with id ${postid} deleted`)
-              }
-            }
-            else {
-              response.status(404).send('User not found')
-            }          
-      }}
+         response.status(200).send(`Post with id ${postid} deleted`)
+      }
       else {
         response.status(404).send('Post not found')
       }
