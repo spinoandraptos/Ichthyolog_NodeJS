@@ -123,14 +123,20 @@ const viewUserPosts = async (request, response) => {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
+        db.dbConnect().query('SELECT profilepic, totalposts, level FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
           else if(result.rowCount == 1){
             var blank = ''
             const picture = result.rows[0].profilepic
-
+            const totalposts = result.rows[0].totalposts + 1
+            const level = result.rows[0].level + 1
+            db.dbConnect().query('UPDATE users SET totalposts = $1, level = $2 WHERE userid = $3'), [totalposts,level, userid], (error, result) => {
+              if (error) {
+                response.send(error.message)
+              }
+              else if(result.rowCount == 1){
                 db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus, species) VALUES ($1, $2, $3, NULLIF($4, $14), now(), NULLIF($5, $14), $6, $7, $8, NULLIF($9,$14), NULLIF($10,$14), NULLIF($11,$14), NULLIF($12,$14), NULLIF($13,$14))', 
                   [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus, species, blank], 
                   (error, result) => {
@@ -139,8 +145,11 @@ const viewUserPosts = async (request, response) => {
                   }
                   else {response.status(201).send(`Post with title: ${title} added`)}
                 })
-   
               }
+              else {
+                response.status(404).send('User not found')
+              }  
+          }}
           else {
             response.status(404).send('User not found')
           }
