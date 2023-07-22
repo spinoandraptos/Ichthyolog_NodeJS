@@ -3,49 +3,82 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 
-const searchSpecies = async (request, response) => {
-    try {
-        const { species, startTime, endTime, sightingLocation } = request.query
+const searchSpeciesName = async (request, response) => {
+  try {
+      const species = request.params.species
 
-        let query = `
-        SELECT COUNT(*) AS count, MAX(sightingtime) AS latest_sightingtime,
-          (SELECT sightinglocation FROM posts
-           WHERE title = $1 AND verified = true
-             AND sightingtime >= $2 AND sightingtime <= $3
-        `
-  
-        const values = [species, startTime, endTime]
-  
-        if (sightingLocation !== '') {
-            query += ' AND sightinglocation = $4'
-            values.push(sightingLocation)
-        }
-  
-        query += `
-           ORDER BY sightingtime DESC
-           LIMIT 1) AS latest_sightinglocation
-        FROM posts
-        WHERE title = $1 AND verified = true
-        AND sightingtime >= $2 AND sightingtime <= $3
-        `
+      const query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE title ILIKE $1
+        AND verified = true
+      ORDER BY title ASC
+    `
 
-        db.dbConnect().query(query, values, (error, result) => {
-            if (error) {
-                response.send(error.message)
-            }
+      const values = [`%${species}%`]
 
-            const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0]
+      db.dbConnect().query(query, values, (error, result) => {
+          if (error) {
+              response.send(error.message)
+          }
 
-            if (count > 0) {
-                response.status(200).json({ count, latest_sightingtime, latest_sightinglocation })
-            } else {
-                response.status(404).send('No entries found')
-            }
-        })
-    } catch(error) {
-        response.status(500).json({ error: 'Internal server error' })
-    }
+          if (result.rowCount > 0) {
+              response.status(200).json(result.rows)
+          } else {
+              response.status(404).send('No entries found')
+          }
+      })
+  } catch(error) {
+      console.error('Error executing query:', error)
+      response.status(500).json({ error: 'Internal server error' })
+  }
 }
+
+const searchSpecies = async (request, response) => {
+  try {
+      const { species, startTime, endTime, sightingLocation } = request.query;
+
+      let query = `
+      SELECT COUNT(*) AS count, MAX(sightingtime) AS latest_sightingtime,
+        (SELECT sightinglocation FROM posts
+         WHERE title ILIKE $1 AND verified = true
+           AND sightingtime >= $2 AND sightingtime <= $3
+      `;
+
+      const values = [`%${species}%`, startTime, endTime];
+
+      if (sightingLocation !== '') {
+          query += ` AND sightinglocation = $4`;
+          values.push(sightingLocation);
+      }
+
+      query += `
+         ORDER BY sightingtime DESC
+         LIMIT 1) AS latest_sightinglocation
+      FROM posts
+      WHERE title ILIKE $1 AND verified = true
+      AND sightingtime >= $2 AND sightingtime <= $3
+      `;
+
+      db.dbConnect().query(query, values, (error, result) => {
+          if (error) {
+              response.send(error.message);
+          }
+
+          const { count, latest_sightingtime, latest_sightinglocation } = result.rows[0];
+
+          if (count > 0) {
+              response.status(200).json({ count, latest_sightingtime, latest_sightinglocation });
+          } else {
+              response.status(404).send('No entries found');
+          }
+      });
+  } catch (error) {
+      response.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
 
 const searchClass = async (request, response) => {
     try {
@@ -398,6 +431,7 @@ ORDER BY gs.date ASC;
 
 
 module.exports = {
+    searchSpeciesName,
     searchSpecies,
     searchClass,
     searchOrder,
