@@ -134,7 +134,7 @@ const viewUserPosts = async (request, response) => {
             var level = result.rows[0].level + 1
             console.log(totalposts)
             console.log(level)
-            db.dbConnect().query('UPDATE users SET totalposts = $1, level = $2 WHERE userid = $3'), [totalposts,level, userid], (error, result) => {
+            db.dbConnect().query('UPDATE users SET totalposts = $2, level = $3 WHERE userid = $1'), [userid, totalposts, level], (error, result) => {
               if (error) {
                 response.send(error.message)
               }
