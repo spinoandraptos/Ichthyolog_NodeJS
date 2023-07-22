@@ -135,8 +135,7 @@ const viewUserPosts = async (request, response) => {
                 response.send(error.message)
               }
               else if(result.rowCount == 1){
-                try{
-                db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus, species) VALUES ($1, $2, $3, NULLIF($4, $14) now(), NULLIF($5, $14), $6, $7, $8, NULLIF($9,$14), NULLIF($10,$14), NULLIF($11,$14), NULLIF($12,$14), NULLIF($13,$14))', 
+                db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus, species) VALUES ($1, $2, $3, $4, now(), $5, $6, $7, $8, NULLIF($9,$14), NULLIF($10,$14), NULLIF($11,$14), NULLIF($12,$14), NULLIF($13,$14))', 
                   [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus, species, blank], 
                   (error, result) => {
                   if (error) {
@@ -144,12 +143,6 @@ const viewUserPosts = async (request, response) => {
                   }
                   else {response.status(201).send(`Post with title: ${title} added`)}
                 })
-              }
-              catch{
-                console.log("ERROR")
-                console.log(error)
-                response.status(401).send("Failed to add post")
-              }
               }
               else {
                 response.status(404).send('User not found')
