@@ -130,8 +130,10 @@ const viewUserPosts = async (request, response) => {
           else if(result.rowCount == 1){
             var blank = ''
             const picture = result.rows[0].profilepic
-            const totalposts = result.rows[0].totalposts + 1
-            const level = result.rows[0].level + 1
+            var totalposts = result.rows[0].totalposts + 1
+            var level = result.rows[0].level + 1
+            console.log(totalposts)
+            console.log(level)
             db.dbConnect().query('UPDATE users SET totalposts = $1, level = $2 WHERE userid = $3'), [totalposts,level, userid], (error, result) => {
               if (error) {
                 response.send(error.message)
