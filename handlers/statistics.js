@@ -5,7 +5,19 @@ dotenv.config()
 
 const searchAll = async (request, response) => {
   try{
-    db.dbConnect().query('SELECT DISTINCT title FROM posts WHERE verified = true ORDER BY title ASC', (error, result) => {
+    const {sightingLocation} = request.query
+    
+    let query = `SELECT DISTINCT title FROM posts WHERE verified = true`
+
+    const values = [sightingLocation]
+
+    if (sightingLocation !== '') {
+      query += ` AND sightinglocation = $1`
+      values.push(sightingLocation)
+    }
+
+    query += ` ORDER BY title ASC`
+    db.dbConnect().query(query,values, (error, result) => {
       if (error) {
         response.send(error.message)
       }
