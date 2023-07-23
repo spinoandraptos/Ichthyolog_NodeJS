@@ -3,6 +3,25 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 
+const searchAll = async (request, response) => {
+  try{
+    db.dbConnect().query('SELECT title FROM posts ORDER BY title ASC', (error, result) => {
+      if (error) {
+        response.send(error.message)
+      }
+      else if (result.rowCount != 0) {
+        response.status(200).json(result.rows)
+      }
+      else {
+        response.status(404).send('Posts not found')
+      }
+    })
+  }
+  catch(error) {
+    response.send(error.message)
+  }
+}
+
 const searchSpeciesName = async (request, response) => {
   try {
       const species = request.params.species
@@ -431,6 +450,7 @@ ORDER BY gs.date ASC;
 
 
 module.exports = {
+    searchAll,
     searchSpeciesName,
     searchSpecies,
     searchClass,
