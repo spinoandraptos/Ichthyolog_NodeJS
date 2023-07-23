@@ -5,7 +5,7 @@ dotenv.config()
 
 const searchAll = async (request, response) => {
   try{
-    db.dbConnect().query('SELECT title FROM posts ORDER BY title ASC', (error, result) => {
+    db.dbConnect().query('SELECT DISTINCT title FROM posts ORDER BY title ASC', (error, result) => {
       if (error) {
         response.send(error.message)
       }
