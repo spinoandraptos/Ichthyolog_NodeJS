@@ -149,17 +149,22 @@ const searchClass = async (request, response) => {
 
 const searchOrder = async (request, response) => {
     try {
-        const order = request.params.order
+      const { order, sightingLocation } = request.query
 
-        const query = `
-        SELECT DISTINCT title
-        FROM posts
-        WHERE _order = $1
-          AND verified = true
-        ORDER BY title ASC
-      `
+      let query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE _order = $1
+        AND verified = true
+    `
+      const values = [order]
 
-        const values = [order]
+      if (sightingLocation !== '') {
+          query += ` AND sightinglocation = $2`
+          values.push(sightingLocation)
+      }
+
+      query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
@@ -180,17 +185,22 @@ const searchOrder = async (request, response) => {
 
 const searchFamily = async (request, response) => {
     try {
-        const family = request.params.family
+      const { family, sightingLocation } = request.query
 
-        const query = `
-        SELECT DISTINCT title
-        FROM posts
-        WHERE family = $1
-          AND verified = true
-        ORDER BY title ASC
-      `
+      let query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE family = $1
+        AND verified = true
+    `
+      const values = [family]
 
-        const values = [family]
+      if (sightingLocation !== '') {
+          query += ` AND sightinglocation = $2`
+          values.push(sightingLocation)
+      }
+
+      query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
@@ -211,17 +221,22 @@ const searchFamily = async (request, response) => {
 
 const searchGenus = async (request, response) => {
     try {
-        const genus = request.params.genus
+      const { genus, sightingLocation } = request.query
 
-        const query = `
-        SELECT DISTINCT title
-        FROM posts
-        WHERE genus = $1
-          AND verified = true
-        ORDER BY title ASC
-      `
+      let query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE genus = $1
+        AND verified = true
+    `
+      const values = [genus]
 
-        const values = [genus]
+      if (sightingLocation !== '') {
+          query += ` AND sightinglocation = $2`
+          values.push(sightingLocation)
+      }
+
+      query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
