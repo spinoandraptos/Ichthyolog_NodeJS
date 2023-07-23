@@ -9,7 +9,7 @@ const searchAll = async (request, response) => {
     
     let query = `SELECT DISTINCT title FROM posts WHERE verified = true`
 
-    const values = [sightingLocation]
+    const values = []
 
     if (sightingLocation !== '') {
       query += ` AND sightinglocation = $1`
@@ -17,7 +17,7 @@ const searchAll = async (request, response) => {
     }
 
     query += ` ORDER BY title ASC`
-    db.dbConnect().query(query,values, (error, result) => {
+    db.dbConnect().query(query, values, (error, result) => {
       if (error) {
         response.send(error.message)
       }
