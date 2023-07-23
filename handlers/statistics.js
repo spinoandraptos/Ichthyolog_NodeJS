@@ -113,17 +113,22 @@ const searchSpecies = async (request, response) => {
 
 const searchClass = async (request, response) => {
     try {
-        const class_ = request.params.class_
+        const { class_, sightingLocation } = request.query
 
-        const query = `
+        let query = `
         SELECT DISTINCT title
         FROM posts
         WHERE class = $1
           AND verified = true
-        ORDER BY title ASC
       `
-
         const values = [class_]
+
+        if (sightingLocation !== '') {
+            query += ` AND sightinglocation = $2`
+            values.push(sightingLocation)
+        }
+
+        query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
