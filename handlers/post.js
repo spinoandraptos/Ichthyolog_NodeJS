@@ -476,7 +476,17 @@ const verifyPost = async (request, response) => {
             response.send(error.message)
           }
           else if (result.rowCount == 1) {
-            response.status(200).send(`Post with id ${postid} verified`)
+            db.dbConnect().query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
+              if (error) {
+                response.send(error.message)
+              }
+              else if (result.rowCount == 1) {
+                response.status(200).send(`Post with id ${postid} verified`)
+              } 
+              else {
+                response.status(404).send('Post not found')
+              }
+            })
           }
           else {
             response.status(404).send('Post not found')
