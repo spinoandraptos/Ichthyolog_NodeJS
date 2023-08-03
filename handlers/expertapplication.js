@@ -118,7 +118,14 @@ const deleteExpertApplication = async (request, response) => {
               response.send(error.message)
             }
             else if (result.rowCount == 1) {
-              response.status(200).send(`User with id: ${authorid} promoted`)
+              db.dbConnect().query('UPDATE comments SET authorexpert = true WHERE authorid = $1', [authorid], (error, result) => {
+                if (error) {
+                  response.send(error.message)
+                }
+                else {
+                  response.status(200).send(`User with id: ${authorid} promoted`)
+                }
+              })
             }
             else {
               response.status(404).send('User not found')
