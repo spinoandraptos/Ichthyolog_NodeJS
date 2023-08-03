@@ -365,7 +365,7 @@ const viewAnyUserbyID = async(request, response) => {
       }
       else if(result.rowCount == 1){
         if (await argon2.verify(result.rows[0].password, password)){
-          var token = jwt.sign({username: result.rows[0].username, userid:result.rows[0].userid}, process.env.SECRETKEY, {expiresIn: "3h", algorithm: "HS256"} )
+          var token = jwt.sign({username: result.rows[0].username, userid:result.rows[0].userid}, process.env.SECRETKEY, {algorithm: "HS256"} )
           response.status(200).send(token)
         }
         else {
