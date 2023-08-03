@@ -3,6 +3,37 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 
+const searchAll = async (request, response) => {
+  try{
+    const {sightingLocation} = request.query
+    
+    let query = `SELECT DISTINCT title FROM posts WHERE verified = true`
+
+    const values = []
+
+    if (sightingLocation !== '') {
+      query += ` AND sightinglocation = $1`
+      values.push(sightingLocation)
+    }
+
+    query += ` ORDER BY title ASC`
+    db.dbConnect().query(query, values, (error, result) => {
+      if (error) {
+        response.send(error.message)
+      }
+      else if (result.rowCount != 0) {
+        response.status(200).json(result.rows)
+      }
+      else {
+        response.status(404).send('Posts not found')
+      }
+    })
+  }
+  catch(error) {
+    response.send(error.message)
+  }
+}
+
 const searchSpeciesName = async (request, response) => {
   try {
       const species = request.params.species
@@ -82,17 +113,22 @@ const searchSpecies = async (request, response) => {
 
 const searchClass = async (request, response) => {
     try {
-        const class_ = request.params.class_
+        const { class_, sightingLocation } = request.query
 
-        const query = `
+        let query = `
         SELECT DISTINCT title
         FROM posts
         WHERE class = $1
           AND verified = true
-        ORDER BY title ASC
       `
-
         const values = [class_]
+
+        if (sightingLocation !== '') {
+            query += ` AND sightinglocation = $2`
+            values.push(sightingLocation)
+        }
+
+        query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
@@ -113,17 +149,22 @@ const searchClass = async (request, response) => {
 
 const searchOrder = async (request, response) => {
     try {
-        const order = request.params.order
+      const { order, sightingLocation } = request.query
 
-        const query = `
-        SELECT DISTINCT title
-        FROM posts
-        WHERE _order = $1
-          AND verified = true
-        ORDER BY title ASC
-      `
+      let query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE _order = $1
+        AND verified = true
+    `
+      const values = [order]
 
-        const values = [order]
+      if (sightingLocation !== '') {
+          query += ` AND sightinglocation = $2`
+          values.push(sightingLocation)
+      }
+
+      query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
@@ -144,17 +185,22 @@ const searchOrder = async (request, response) => {
 
 const searchFamily = async (request, response) => {
     try {
-        const family = request.params.family
+      const { family, sightingLocation } = request.query
 
-        const query = `
-        SELECT DISTINCT title
-        FROM posts
-        WHERE family = $1
-          AND verified = true
-        ORDER BY title ASC
-      `
+      let query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE family = $1
+        AND verified = true
+    `
+      const values = [family]
 
-        const values = [family]
+      if (sightingLocation !== '') {
+          query += ` AND sightinglocation = $2`
+          values.push(sightingLocation)
+      }
+
+      query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
@@ -175,17 +221,22 @@ const searchFamily = async (request, response) => {
 
 const searchGenus = async (request, response) => {
     try {
-        const genus = request.params.genus
+      const { genus, sightingLocation } = request.query
 
-        const query = `
-        SELECT DISTINCT title
-        FROM posts
-        WHERE genus = $1
-          AND verified = true
-        ORDER BY title ASC
-      `
+      let query = `
+      SELECT DISTINCT title
+      FROM posts
+      WHERE genus = $1
+        AND verified = true
+    `
+      const values = [genus]
 
-        const values = [genus]
+      if (sightingLocation !== '') {
+          query += ` AND sightinglocation = $2`
+          values.push(sightingLocation)
+      }
+
+      query += ` ORDER BY title ASC`
 
         db.dbConnect().query(query, values, (error, result) => {
             if (error) {
@@ -431,6 +482,7 @@ ORDER BY gs.date ASC;
 
 
 module.exports = {
+    searchAll,
     searchSpeciesName,
     searchSpecies,
     searchClass,

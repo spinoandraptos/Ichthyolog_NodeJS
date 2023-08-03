@@ -109,6 +109,7 @@ express_server.put('/expertapplications/:applicationid', applications.rejectExpe
 express_server.delete('/expertapplications/:applicationid', applications.deleteExpertApplication)
 
 //route handlers (statistics)
+express_server.get('/statistics/all', statistics.searchAll)
 express_server.get('/statistics/speciesName/:species', statistics.searchSpeciesName)
 express_server.get('/statistics/species/:species', statistics.searchSpecies)
 express_server.get('/statistics/class/:class_', statistics.searchClass)
