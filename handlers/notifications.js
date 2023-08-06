@@ -9,8 +9,8 @@ const viewAllNotifications = async (request, response) => {
 
     try{
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-        const userid = result.userid
-        db.dbConnect().query('SELECT * FROM commentnotifications WHERE receiverid = $1 ORDER BY time desc', [userid], (error, result) => {
+        const authorname = result.username
+        db.dbConnect().query('SELECT * FROM commentnotifications WHERE receiverusername = $1 ORDER BY time desc', [authorname], (error, result) => {
         if (error) {
             response.send(error.message)
         }
