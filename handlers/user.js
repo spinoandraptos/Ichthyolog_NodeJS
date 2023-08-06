@@ -43,17 +43,24 @@ const viewAnyUserbyID = async(request, response) => {
 } 
 
 const viewAllUsernames = async(request, response) => {
-  db.dbConnect().query('SELECT username FROM users', (error, result) => {
-    if (error) {
-      response.send(error.message)
-    }
-    else if (result.rowCount != 0) {
-      response.status(200).json(result.rows)
-    }
-    else {
-      response.status(404).send('User not found')
-    }
-  })
+  const jwt_auth = request.get('Authorisation')
+  try{
+    jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
+    db.dbConnect().query('SELECT username FROM users', (error, result) => {
+      if (error) {
+        response.send(error.message)
+      }
+      else if (result.rowCount != 0) {
+        response.status(200).json(result.rows)
+      }
+      else {
+        response.status(404).send('Users not found')
+      }
+    })
+  }
+  catch(error) {
+    response.send(error.message)
+  }
 } 
   
   
