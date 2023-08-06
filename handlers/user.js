@@ -15,7 +15,7 @@ dotenv.config()
       if (error) {
         response.send(error.message)
       }
-      if(result.rowCount == 1){
+      else if(result.rowCount == 1){
       response.status(200).json(result.rows)
       }
       else {
@@ -33,8 +33,22 @@ const viewAnyUserbyID = async(request, response) => {
     if (error) {
       response.send(error.message)
     }
-    if(result.rowCount == 1){
+    else if(result.rowCount == 1){
     response.status(200).json(result.rows)
+    }
+    else {
+      response.status(404).send('User not found')
+    }
+  })
+} 
+
+const viewAllUsernames = async(request, response) => {
+  db.dbConnect().query('SELECT username FROM users', (error, result) => {
+    if (error) {
+      response.send(error.message)
+    }
+    else if (result.rowCount != 0) {
+      response.status(200).json(result.rows)
     }
     else {
       response.status(404).send('User not found')
@@ -236,7 +250,16 @@ const viewAnyUserbyID = async(request, response) => {
                     if (error) {
                       response.send(error.message)                    
                     } else {
-                    response.status(200).send(`User with userid: ${userid} modified`)
+                      db.dbConnect().query(
+                        'UPDATE notifications SET senderprofilepic = $1 WHERE senderid = $2',
+                        [profilepic, userid],
+                        (error) => {
+                          if (error) {
+                            response.send(error.message)                    
+                          } else {
+                          response.status(200).send(`User with userid: ${userid} modified`)
+                          }
+                        })
                     }
                 })
               }
@@ -394,6 +417,7 @@ const viewAnyUserbyID = async(request, response) => {
   module.exports = {
     viewOwnUser,
     viewAnyUserbyID,
+    viewAllUsernames,
     addUser,
     updateUsername,
     updateUserPassword,

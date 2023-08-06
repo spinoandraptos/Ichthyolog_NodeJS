@@ -37,10 +37,12 @@ const statistics = require('./handlers/statistics')
 const votes = require('./handlers/vote')
 const disputes = require('./handlers/disputes')
 const applications = require('./handlers/expertapplication')
+const notifications = require('./handlers/notifications')
 
 //route handlers (users)
 express_server.get('/user', users.viewOwnUser)
 express_server.get('/user/:userid', users.viewAnyUserbyID)
+express_server.get('/usernames', users.viewAllUsernames)
 express_server.post('/user', users.addUser)
 express_server.post('/user/login', users.loginUser)
 express_server.post('/user/logout', users.logoffUser)
@@ -124,7 +126,10 @@ express_server.get('/statistics/hour/:species', statistics.getSpeciesSightingsBy
 express_server.get('/statistics/week/:species', statistics.getSpeciesCountWeek)
 express_server.get('/statistics/month/:species', statistics.getSpeciesCountMonth)
 
-
+//route handlers (notifications)
+express_server.get('/notifications', notifications.viewAllNotifications)
+express_server.post('/notifications', notifications.createCommentNotification)
+express_server.put('/notifications/:notificationid', notifications.openNotification)
 
 //server now listens for active connections from the specified port
 express_server.listen(port, () => {

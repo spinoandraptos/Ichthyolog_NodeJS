@@ -1,4 +1,3 @@
-const e = require('cors')
 const db = require('../database')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
