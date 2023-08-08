@@ -51,14 +51,14 @@ const openNotification = async (request, response) => {
 
 const createCommentNotification = async (request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { receiverusername, notificationcontent, senderprofilepic, postid } = request.body
+    const { receiverusername, notificationcontent, senderprofilepic, postid, postpicture } = request.body
   
     try{
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('INSERT INTO commentnotifications (receiverusername, notificationcontent,  senderprofilepic, time, senderusername, senderid, postid ) VALUES ($1, $2, $3, now(), $4, $5, $6)', 
-        [receiverusername, notificationcontent, senderprofilepic, authorname, userid, postid], (error, result) => {
+        db.dbConnect().query('INSERT INTO commentnotifications (receiverusername, notificationcontent,  senderprofilepic, time, senderusername, senderid, postid, postpicture ) VALUES ($1, $2, $3, now(), $4, $5, $6, $7)', 
+        [receiverusername, notificationcontent, senderprofilepic, authorname, userid, postid, postpicture], (error, result) => {
             if (error) {
                 response.send(error.message)
               }
