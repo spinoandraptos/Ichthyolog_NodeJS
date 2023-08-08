@@ -68,7 +68,7 @@ const viewUserComments = async (request, response) => {
 
   const addComment= async(request, response) => {
     const jwt_auth = request.get('Authorisation')
-    const { postid, content } = request.body
+    const { postid, content, authorexpert } = request.body
   
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
@@ -80,8 +80,8 @@ const viewUserComments = async (request, response) => {
           }
           else if(result.rowCount == 1){
             const picture = result.rows[0].profilepic
-            db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime) VALUES ($1, $2, $3, $4, $5, now())', 
-            [userid, postid, authorname, content, picture], 
+            db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime, authorexpert) VALUES ($1, $2, $3, $4, $5, now(), $6)', 
+            [userid, postid, authorname, content, picture, authorexpert], 
             (error, result) => {
             if (error) {
               response.send(error.message)
