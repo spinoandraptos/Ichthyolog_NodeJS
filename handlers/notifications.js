@@ -27,6 +27,29 @@ const viewAllNotifications = async (request, response) => {
     }
 }
 
+const countAllUnviewedNotifications = async (request, response) => {
+    const jwt_auth = request.get('Authorisation')
+
+    try{
+        const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
+        const authorname = result.username
+        db.dbConnect().query('SELECT * FROM commentnotifications WHERE receiverusername = $1 AND viewed = FALSE', [authorname], (error, result) => {
+        if (error) {
+            response.send(error.message)
+        }
+        else if (result.rowCount != 0) {
+            response.status(200).json(result.rowCount)
+        }
+        else {
+            response.status(404).send('Notifications not found')
+        }
+        })
+    }
+    catch(error) {
+        response.send(error.message)
+    }
+}
+
 const openNotification = async (request, response) => {
     const jwt_auth = request.get('Authorisation')
     const notificationid = request.params.notificationid
@@ -75,5 +98,6 @@ const createCommentNotification = async (request, response) => {
 module.exports = {
     viewAllNotifications,
     openNotification,
-    createCommentNotification
+    createCommentNotification,
+    countAllUnviewedNotifications
 }

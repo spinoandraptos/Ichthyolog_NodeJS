@@ -128,6 +128,7 @@ express_server.get('/statistics/month/:species', statistics.getSpeciesCountMonth
 
 //route handlers (notifications)
 express_server.get('/notifications', notifications.viewAllNotifications)
+express_server.get('/notifications/unviewed', notifications.countAllUnviewedNotifications)
 express_server.post('/notifications', notifications.createCommentNotification)
 express_server.put('/notifications/:notificationid', notifications.openNotification)
 
