@@ -11,7 +11,7 @@ dotenv.config()
     try {
     const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
     const userid = result.userid  
-    db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
+    db.clientPool.query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -29,7 +29,7 @@ dotenv.config()
 
 const viewAnyUserbyID = async(request, response) => {
   const userid = request.params.userid
-  db.dbConnect().query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
+  db.clientPool.query('SELECT * FROM users WHERE userid = $1', [userid], (error, result) => {
     if (error) {
       response.send(error.message)
     }
@@ -46,7 +46,7 @@ const viewAllUsernames = async(request, response) => {
   const jwt_auth = request.get('Authorisation')
   try{
     jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
-    db.dbConnect().query('SELECT username FROM users', (error, result) => {
+    db.clientPool.query('SELECT username FROM users', (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -69,7 +69,7 @@ const viewAllUsernames = async(request, response) => {
     const hashedPassword = await argon2.hash(password)
   
     try{
-    db.dbConnect().query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', 
+    db.clientPool.query('INSERT INTO users (username, password, email) VALUES ($1, $2, $3)', 
     [username, hashedPassword, email], 
     (error, result) => {
       if(error){
@@ -90,7 +90,7 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
-      db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
+      db.clientPool.query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
           response.send(error.message)
           
@@ -98,7 +98,7 @@ const viewAllUsernames = async(request, response) => {
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
             if(username != ''){
-              db.dbConnect().query(
+              db.clientPool.query(
                 'UPDATE users SET username = $1 WHERE userid = $2',
                 [username, userid],
                 (error, result) => {
@@ -138,14 +138,14 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
-      db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
+      db.clientPool.query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
           response.send(error.message)
         }
         else if(result.rowCount == 1){
           if (await argon2.verify(result.rows[0].password, oldPassword)){
             if(email != ''){
-              db.dbConnect().query(
+              db.clientPool.query(
                 'UPDATE users SET email = $1 WHERE userid = $2',
                 [email, userid],
                 (error, result) => {
@@ -185,7 +185,7 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
-      db.dbConnect().query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
+      db.clientPool.query('SELECT password FROM users WHERE userid = $1', [userid], async(error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -193,7 +193,7 @@ const viewAllUsernames = async(request, response) => {
           if (await argon2.verify(result.rows[0].password, oldPassword)){
             if(newPassword != ''){
               const hashedNewPassword = await argon2.hash(newPassword)
-              db.dbConnect().query(
+              db.clientPool.query(
                 'UPDATE users SET password = $1 WHERE userid = $2',
                 [hashedNewPassword, userid],
                 (error, result) => {
@@ -234,7 +234,7 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE users SET profilepic = $1 WHERE userid = $2',
         [profilepic, userid],
         (error, result) => {
@@ -242,7 +242,7 @@ const viewAllUsernames = async(request, response) => {
             response.send(error.message)           
           }
           else if(result.rowCount == 1){
-            db.dbConnect().query(
+            db.clientPool.query(
               'UPDATE posts SET authorpicurl = $1 WHERE userid = $2',
               [profilepic, userid],
               (error) => {
@@ -250,14 +250,14 @@ const viewAllUsernames = async(request, response) => {
                   response.send(error.message)                
                 }
                 else {
-                  db.dbConnect().query(
+                  db.clientPool.query(
                   'UPDATE comments SET authorpic = $1 WHERE authorid = $2',
                   [profilepic, userid],
                   (error) => {
                     if (error) {
                       response.send(error.message)                    
                     } else {
-                      db.dbConnect().query(
+                      db.clientPool.query(
                         'UPDATE notifications SET senderprofilepic = $1 WHERE senderid = $2',
                         [profilepic, userid],
                         (error) => {
@@ -289,7 +289,7 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
-            db.dbConnect().query(
+            db.clientPool.query(
               'UPDATE users SET level = level + $1 WHERE userid = $2',
               [level, userid],
               (error, result) => {
@@ -316,7 +316,7 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
-            db.dbConnect().query(
+            db.clientPool.query(
               'UPDATE users SET totalposts = totalposts + $1 WHERE userid = $2',
               [post_number, userid],
               (error, result) => {
@@ -344,7 +344,7 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
-            db.dbConnect().query(
+            db.clientPool.query(
               'UPDATE users SET speciescount = speciescount + $1 WHERE userid = $2',
               [species_number, userid],
               (error, result) => {
@@ -370,7 +370,7 @@ const viewAllUsernames = async(request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid 
-      db.dbConnect().query('DELETE FROM users WHERE userid = $1', [userid], (error, result) => {
+      db.clientPool.query('DELETE FROM users WHERE userid = $1', [userid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -389,7 +389,7 @@ const viewAllUsernames = async(request, response) => {
   const loginUser = async(request, response) => {
     const { email, username, password } = request.body
 
-    db.dbConnect().query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username], async(error, result) => {
+    db.clientPool.query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username], async(error, result) => {
       if (error) {
         response.send(error.message)
       }

@@ -7,7 +7,7 @@ dotenv.config()
     const commentid = request.params.commentid
     const authorid = request.params.authorid
       try {
-      db.dbConnect().query('SELECT * FROM upvotes WHERE commentid = $1 AND upvoterid = $2', [commentid, authorid], (error, result) => {
+      db.clientPool.query('SELECT * FROM upvotes WHERE commentid = $1 AND upvoterid = $2', [commentid, authorid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -27,7 +27,7 @@ dotenv.config()
     const commentid = request.params.commentid
     const authorid = request.params.authorid
       try {
-      db.dbConnect().query('SELECT * FROM downvotes WHERE commentid = $1 AND downvoterid = $2', [commentid, authorid], (error, result) => {
+      db.clientPool.query('SELECT * FROM downvotes WHERE commentid = $1 AND downvoterid = $2', [commentid, authorid], (error, result) => {
         if (error) {
           response.send(error.message)
         }

@@ -8,7 +8,7 @@ const viewAllExpertApplications = async (request, response) => {
     const jwt_auth = request.get('Authorisation')
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('SELECT * FROM expertapplicationrequests ORDER BY approved desc, postedtime desc', (error, result) => {
+      db.clientPool.query('SELECT * FROM expertapplicationrequests ORDER BY approved desc, postedtime desc', (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -30,7 +30,7 @@ const viewOwnExpertApplications = async (request, response) => {
     const jwt_auth = request.get('Authorisation')
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('SELECT * FROM expertapplicationrequests WHERE authorid = $1 ORDER BY approved desc, postedtime desc',[authorid], (error, result) => {
+      db.clientPool.query('SELECT * FROM expertapplicationrequests WHERE authorid = $1 ORDER BY approved desc, postedtime desc',[authorid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -54,12 +54,12 @@ const addExpertApplication= async(request, response) => {
     try {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
-        db.dbConnect().query('SELECT * FROM expertapplicationrequests WHERE authorid = $1 AND approved IS NOT FALSE ',[userid], (error, result) => {
+        db.clientPool.query('SELECT * FROM expertapplicationrequests WHERE authorid = $1 AND approved IS NOT FALSE ',[userid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
           else if (result.rowCount == 0) {
-            db.dbConnect().query('INSERT INTO expertapplicationrequests (authorid, authorname, email, contact, occupation, credentials, gender, age, postedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())', 
+            db.clientPool.query('INSERT INTO expertapplicationrequests (authorid, authorname, email, contact, occupation, credentials, gender, age, postedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())', 
             [userid, name, email, contact, occupation, credentials, gender, age], 
             (error, result) => {
             if (error) {
@@ -86,7 +86,7 @@ const deleteExpertApplication = async (request, response) => {
     const applicationid = request.params.applicationid
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('DELETE FROM expertapplicationrequests WHERE applicationid = $1', [applicationid], (error, result) => {
+      db.clientPool.query('DELETE FROM expertapplicationrequests WHERE applicationid = $1', [applicationid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -108,17 +108,17 @@ const deleteExpertApplication = async (request, response) => {
     const applicationid = request.params.applicationid
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('UPDATE expertapplicationrequests SET approved = TRUE WHERE applicationid = $1', [applicationid], (error, result) => {
+      db.clientPool.query('UPDATE expertapplicationrequests SET approved = TRUE WHERE applicationid = $1', [applicationid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
         else if (result.rowCount == 1) {
-          db.dbConnect().query('UPDATE users SET expert = TRUE WHERE userid = $1', [authorid], (error, result) => {
+          db.clientPool.query('UPDATE users SET expert = TRUE WHERE userid = $1', [authorid], (error, result) => {
             if (error) {
               response.send(error.message)
             }
             else if (result.rowCount == 1) {
-              db.dbConnect().query('UPDATE comments SET authorexpert = true WHERE authorid = $1', [authorid], (error, result) => {
+              db.clientPool.query('UPDATE comments SET authorexpert = true WHERE authorid = $1', [authorid], (error, result) => {
                 if (error) {
                   response.send(error.message)
                 }
@@ -147,7 +147,7 @@ const deleteExpertApplication = async (request, response) => {
     const rejectionreason = request.body.rejectionreason
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('UPDATE expertapplicationrequests SET approved = FALSE, rejectionreason = $1 WHERE applicationid = $2', [rejectionreason, applicationid], (error, result) => {
+      db.clientPool.query('UPDATE expertapplicationrequests SET approved = FALSE, rejectionreason = $1 WHERE applicationid = $2', [rejectionreason, applicationid], (error, result) => {
         if (error) {
           response.send(error.message)
         }

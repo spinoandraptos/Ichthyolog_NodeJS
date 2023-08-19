@@ -17,7 +17,7 @@ const searchAll = async (request, response) => {
     }
 
     query += ` ORDER BY title ASC`
-    db.dbConnect().query(query, values, (error, result) => {
+    db.clientPool.query(query, values, (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -48,7 +48,7 @@ const searchSpeciesName = async (request, response) => {
 
       const values = [`%${species}%`]
 
-      db.dbConnect().query(query, values, (error, result) => {
+      db.clientPool.query(query, values, (error, result) => {
           if (error) {
               response.send(error.message)
           }
@@ -91,7 +91,7 @@ const searchSpecies = async (request, response) => {
       AND sightingtime >= $2 AND sightingtime <= $3
       `;
 
-      db.dbConnect().query(query, values, (error, result) => {
+      db.clientPool.query(query, values, (error, result) => {
           if (error) {
               response.send(error.message);
           }
@@ -130,7 +130,7 @@ const searchClass = async (request, response) => {
 
         query += ` ORDER BY title ASC`
 
-        db.dbConnect().query(query, values, (error, result) => {
+        db.clientPool.query(query, values, (error, result) => {
             if (error) {
                 response.send(error.message)
             }
@@ -166,7 +166,7 @@ const searchOrder = async (request, response) => {
 
       query += ` ORDER BY title ASC`
 
-        db.dbConnect().query(query, values, (error, result) => {
+        db.clientPool.query(query, values, (error, result) => {
             if (error) {
                 response.send(error.message)
             }
@@ -202,7 +202,7 @@ const searchFamily = async (request, response) => {
 
       query += ` ORDER BY title ASC`
 
-        db.dbConnect().query(query, values, (error, result) => {
+        db.clientPool.query(query, values, (error, result) => {
             if (error) {
                 response.send(error.message)
             }
@@ -238,7 +238,7 @@ const searchGenus = async (request, response) => {
 
       query += ` ORDER BY title ASC`
 
-        db.dbConnect().query(query, values, (error, result) => {
+        db.clientPool.query(query, values, (error, result) => {
             if (error) {
                 response.send(error.message)
             }
@@ -265,7 +265,7 @@ const searchFamilyCatalogue = async (request, response) => {
         ORDER BY family ASC
       `
   
-      db.dbConnect().query(query, (error, result) => {
+      db.clientPool.query(query, (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -288,7 +288,7 @@ const searchFamilyCatalogue = async (request, response) => {
         ORDER BY class ASC
       `
   
-      db.dbConnect().query(query, (error, result) => {
+      db.clientPool.query(query, (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -311,7 +311,7 @@ const searchFamilyCatalogue = async (request, response) => {
         ORDER BY "_order" ASC
       `
   
-      db.dbConnect().query(query, (error, result) => {
+      db.clientPool.query(query, (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -334,7 +334,7 @@ const searchFamilyCatalogue = async (request, response) => {
         ORDER BY genus ASC
       `
   
-      db.dbConnect().query(query, (error, result) => {
+      db.clientPool.query(query, (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -375,7 +375,7 @@ ORDER BY gs.hour_interval ASC
   
       const values = [species]
   
-      db.dbConnect().query(query, values, (error, result) => {
+      db.clientPool.query(query, values, (error, result) => {
         if (error) {
           console.error('Error executing query:', error)
           response.status(500).json({ error: 'Internal server error' })
@@ -419,7 +419,7 @@ ORDER BY gs.hour_interval ASC
       
       const values = [species];
       
-      db.dbConnect().query(query, values, (error, result) => {
+      db.clientPool.query(query, values, (error, result) => {
         if (error) {
           console.error('Error executing query:', error);
           response.status(500).json({ error: 'Internal server error' });
@@ -464,7 +464,7 @@ ORDER BY gs.date ASC;
       
       const values = [species];
       
-      db.dbConnect().query(query, values, (error, result) => {
+      db.clientPool.query(query, values, (error, result) => {
         if (error) {
           console.error('Error executing query:', error);
           response.status(500).json({ error: 'Internal server error' });

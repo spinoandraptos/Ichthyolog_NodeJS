@@ -10,7 +10,7 @@ const viewAllNotifications = async (request, response) => {
     try{
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
         const authorname = result.username
-        db.dbConnect().query('SELECT * FROM commentnotifications WHERE receiverusername = $1 ORDER BY time desc', [authorname], (error, result) => {
+        db.clientPool.query('SELECT * FROM commentnotifications WHERE receiverusername = $1 ORDER BY time desc', [authorname], (error, result) => {
         if (error) {
             response.send(error.message)
         }
@@ -33,7 +33,7 @@ const countAllUnviewedNotifications = async (request, response) => {
     try{
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
         const authorname = result.username
-        db.dbConnect().query('SELECT * FROM commentnotifications WHERE receiverusername = $1 AND viewed = FALSE', [authorname], (error, result) => {
+        db.clientPool.query('SELECT * FROM commentnotifications WHERE receiverusername = $1 AND viewed = FALSE', [authorname], (error, result) => {
         if (error) {
             response.send(error.message)
         }
@@ -55,7 +55,7 @@ const openNotification = async (request, response) => {
     const notificationid = request.params.notificationid
     try{
         jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-        db.dbConnect().query('UPDATE commentnotifications SET viewed = TRUE WHERE notificationid = $1', [notificationid], (error, result) => {
+        db.clientPool.query('UPDATE commentnotifications SET viewed = TRUE WHERE notificationid = $1', [notificationid], (error, result) => {
         if (error) {
             response.send(error.message)
         }
@@ -80,7 +80,7 @@ const createCommentNotification = async (request, response) => {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('INSERT INTO commentnotifications (receiverusername, notificationcontent,  senderprofilepic, time, senderusername, senderid, postid, postpicture ) VALUES ($1, $2, $3, now(), $4, $5, $6, $7)', 
+        db.clientPool.query('INSERT INTO commentnotifications (receiverusername, notificationcontent,  senderprofilepic, time, senderusername, senderid, postid, postpicture ) VALUES ($1, $2, $3, now(), $4, $5, $6, $7)', 
         [receiverusername, notificationcontent, senderprofilepic, authorname, userid, postid, postpicture], (error, result) => {
             if (error) {
                 response.send(error.message)

@@ -6,7 +6,7 @@ dotenv.config()
 
 const viewAllPosts = async (request, response) => {
   try{
-    db.dbConnect().query('SELECT * FROM posts ORDER BY flagged desc, time desc ', (error, result) => {
+    db.clientPool.query('SELECT * FROM posts ORDER BY flagged desc, time desc ', (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -25,7 +25,7 @@ const viewAllPosts = async (request, response) => {
 
 const viewAllVerifiedPosts = async (request, response) => {
   try{
-    db.dbConnect().query('SELECT * FROM posts WHERE verified ORDER BY flagged desc, time desc', (error, result) => {
+    db.clientPool.query('SELECT * FROM posts WHERE verified ORDER BY flagged desc, time desc', (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -44,7 +44,7 @@ const viewAllVerifiedPosts = async (request, response) => {
 
 const viewAllUnverifiedPosts = async (request, response) => {
   try{
-    db.dbConnect().query('SELECT * FROM posts WHERE NOT verified ORDER BY flagged desc, time desc', (error, result) => {
+    db.clientPool.query('SELECT * FROM posts WHERE NOT verified ORDER BY flagged desc, time desc', (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -67,7 +67,7 @@ const viewUserPosts = async (request, response) => {
   try {
     const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     const userid = result.userid
-    db.dbConnect().query('SELECT * FROM posts WHERE userid = $1 ORDER BY flagged desc, time desc', [userid], (error, result) => {
+    db.clientPool.query('SELECT * FROM posts WHERE userid = $1 ORDER BY flagged desc, time desc', [userid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -85,7 +85,7 @@ const viewUserPosts = async (request, response) => {
 
   const viewPost = async(request, response) => {
     const postid = request.params.postid
-    db.dbConnect().query('SELECT * FROM posts WHERE postid = $1', [postid], (error, result) => {
+    db.clientPool.query('SELECT * FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -100,7 +100,7 @@ const viewUserPosts = async (request, response) => {
 
   const viewPostIdByTitle = async(request, response) => {
     const title = request.params.title
-    db.dbConnect().query('SELECT postid FROM posts WHERE title = $1', [title], (error, result) => {
+    db.clientPool.query('SELECT postid FROM posts WHERE title = $1', [title], (error, result) => {
       if (error) {
         throw error
       }
@@ -122,7 +122,7 @@ const viewUserPosts = async (request, response) => {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('SELECT profilepic, totalposts, level FROM users WHERE userid = $1', [userid], (error, result) => {
+        db.clientPool.query('SELECT profilepic, totalposts, level FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
@@ -134,7 +134,7 @@ const viewUserPosts = async (request, response) => {
             console.log(totalposts)
             console.log(level)
 
-            db.dbConnect().query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus, species) VALUES ($1, $2, $3, NULLIF($4, $14), now(), NULLIF($5, $14), $6, $7, $8, NULLIF($9,$14), NULLIF($10,$14), NULLIF($11,$14), NULLIF($12,$14), NULLIF($13,$14))', 
+            db.clientPool.query('INSERT INTO posts (userid, authorname, title, description, time, sightinglocation, sightingtime, imageurl, authorpicurl, class, _order, family, genus, species) VALUES ($1, $2, $3, NULLIF($4, $14), now(), NULLIF($5, $14), $6, $7, $8, NULLIF($9,$14), NULLIF($10,$14), NULLIF($11,$14), NULLIF($12,$14), NULLIF($13,$14))', 
               [userid, authorname, title, description, sightingLocation, sightingTime, imageURL, picture, _class, order, family, genus, species, blank], 
               (error, result) => {
               if (error) {
@@ -163,7 +163,7 @@ const updatePostTitle = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(title != ''){
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE posts SET title = $1 WHERE postid = $2',
         [title, postid],
         (error, result) => {
@@ -198,7 +198,7 @@ const updatePostDescription = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(description != ''){
-    db.dbConnect().query(
+    db.clientPool.query(
       'UPDATE posts SET description = $1 WHERE postid = $2',
       [description, postid],
         (error, result) => {
@@ -233,7 +233,7 @@ const updatePostSightingLocation = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(sightingLocation != ''){
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE posts SET sightinglocation = $1 WHERE postid = $2',
         [sightingLocation, postid],
         (error, result) => {
@@ -268,7 +268,7 @@ const updatePostClass = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(_class != ''){
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE posts SET class = $1 WHERE postid = $2',
         [_class, postid],
         (error, result) => {
@@ -303,7 +303,7 @@ const updatePostOrder = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(order != ''){
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE posts SET _order = $1 WHERE postid = $2',
         [order, postid],
         (error, result) => {
@@ -338,7 +338,7 @@ const updatePostFamily = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(family != ''){
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE posts SET family = $1 WHERE postid = $2',
         [family, postid],
         (error, result) => {
@@ -373,7 +373,7 @@ const updatePostGenus = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(genus != ''){
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE posts SET genus = $1 WHERE postid = $2',
         [genus, postid],
         (error, result) => {
@@ -408,7 +408,7 @@ const updatePostSpecies = async (request, response) => {
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     if(species != ''){
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE posts SET species = $1 WHERE postid = $2',
         [species, postid],
         (error, result) => {
@@ -442,7 +442,7 @@ const deletePost = async (request, response) => {
   try {
     const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     const userid = result.userid
-    db.dbConnect().query('DELETE FROM posts WHERE postid = $1', [postid], (error, result) => {
+    db.clientPool.query('DELETE FROM posts WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -465,17 +465,17 @@ const verifyPost = async (request, response) => {
   try {
     const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
     const authorname = result.username
-    db.dbConnect().query('UPDATE posts SET verified = TRUE WHERE postid = $1', [postid], (error, result) => {
+    db.clientPool.query('UPDATE posts SET verified = TRUE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
       if (result.rowCount == 1) {
-        db.dbConnect().query('UPDATE posts SET verifiedby = $2 WHERE postid = $1', [postid, authorname], (error, result) => {
+        db.clientPool.query('UPDATE posts SET verifiedby = $2 WHERE postid = $1', [postid, authorname], (error, result) => {
           if (error) {
             response.send(error.message)
           }
           else if (result.rowCount == 1) {
-            db.dbConnect().query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
+            db.clientPool.query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
               if (error) {
                 response.send(error.message)
               }
@@ -507,7 +507,7 @@ const flagPost = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query('UPDATE posts SET flagged = TRUE WHERE postid = $1', [postid], (error, result) => {
+    db.clientPool.query('UPDATE posts SET flagged = TRUE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -529,7 +529,7 @@ const unFlagPost = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
+    db.clientPool.query('UPDATE posts SET flagged = FALSE WHERE postid = $1', [postid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
