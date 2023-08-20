@@ -10,7 +10,7 @@ const viewUserComments = async (request, response) => {
     try {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
       const userid = result.userid
-      db.dbConnect().query('SELECT * FROM comments WHERE userid = $1', [userid], (error, result) => {
+      db.clientPool.query('SELECT * FROM comments WHERE userid = $1', [userid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -30,7 +30,7 @@ const viewUserComments = async (request, response) => {
     const postid = request.params.postid
   
     try {
-      db.dbConnect().query('SELECT * FROM comments WHERE postid = $1 ORDER BY upvotes DESC, postedtime DESC', [postid], (error, result) => {
+      db.clientPool.query('SELECT * FROM comments WHERE postid = $1 ORDER BY upvotes DESC, postedtime DESC', [postid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -50,7 +50,7 @@ const viewUserComments = async (request, response) => {
   const viewComment = async(request, response) => {
     const commentid = request.params.commentid
     try{
-    db.dbConnect().query('SELECT * FROM comments WHERE commentid = $1', [commentid], (error, result) => {
+    db.clientPool.query('SELECT * FROM comments WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -74,13 +74,13 @@ const viewUserComments = async (request, response) => {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
+        db.clientPool.query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
           else if(result.rowCount == 1){
             const picture = result.rows[0].profilepic
-            db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime, authorexpert) VALUES ($1, $2, $3, $4, $5, now(), $6)', 
+            db.clientPool.query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime, authorexpert) VALUES ($1, $2, $3, $4, $5, now(), $6)', 
             [userid, postid, authorname, content, picture, authorexpert], 
             (error, result) => {
             if (error) {
@@ -106,13 +106,13 @@ const addIdSuggestion= async(request, response) => {
       const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
       const userid = result.userid  
       const authorname = result.username
-      db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
+      db.clientPool.query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
         if(result.rowCount == 1){
           const picture = result.rows[0].profilepic
-          db.dbConnect().query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime, idsuggestion) VALUES ($1, $2, $3, $4, $5, now(), TRUE)', 
+          db.clientPool.query('INSERT INTO comments (authorid, postid, authorname, content, authorpic, postedtime, idsuggestion) VALUES ($1, $2, $3, $4, $5, now(), TRUE)', 
           [userid, postid, authorname, content, picture], 
           (error, result) => {
           if (error) {
@@ -137,7 +137,7 @@ const acceptIdSuggestion = async(request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
-    db.dbConnect().query(
+    db.clientPool.query(
       'SELECT FROM comments WHERE postid = $1 AND suggestionapproved = TRUE AND idreplaced = FALSE AND suggestionrejected = FALSE',
       [postid],
       (error, result) => {
@@ -145,7 +145,7 @@ const acceptIdSuggestion = async(request, response) => {
           response.send(error.message)
         }
         else if(result.rowCount != 1){
-          db.dbConnect().query(
+          db.clientPool.query(
             'UPDATE comments SET suggestionapproved = TRUE WHERE commentid = $1',
             [commentid],
             (error, result) => {
@@ -153,7 +153,7 @@ const acceptIdSuggestion = async(request, response) => {
                 response.send(error.message)
               }
               else if(result.rowCount == 1){
-                db.dbConnect().query(
+                db.clientPool.query(
                   'UPDATE posts SET title = $1, verified = TRUE, flagged = FALSE WHERE postid = $2',
                   [content, postid],
                   (error, result) => {
@@ -192,7 +192,7 @@ const rejectIdSuggestion = async(request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
-    db.dbConnect().query(
+    db.clientPool.query(
       'UPDATE comments SET suggestionrejected = TRUE, idrejectionreason = $1 WHERE commentid = $2',
       [rejectionreason, commentid],
       (error, result) => {
@@ -219,7 +219,7 @@ const updateComment = async(request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'}) 
-    db.dbConnect().query(
+    db.clientPool.query(
       'UPDATE comments SET content = $1, edited = TRUE, editedtime = now() WHERE commentid = $2',
       [content, commentid],
       (error, result) => {
@@ -244,7 +244,7 @@ const deleteComment = async (request, response) => {
   const commentid = request.params.commentid
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query('DELETE FROM comments WHERE commentid = $1', [commentid], (error, result) => {
+    db.clientPool.query('DELETE FROM comments WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
@@ -266,12 +266,12 @@ const upVoteComment = async (request, response) => {
   const commentid = request.params.commentid
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
+    db.clientPool.query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
       else if (result.rowCount == 1) {
-        db.dbConnect().query('INSERT INTO upvotes (commentid, upvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
+        db.clientPool.query('INSERT INTO upvotes (commentid, upvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
@@ -296,12 +296,12 @@ const unUpVoteComment = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
+    db.clientPool.query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
       else if (result.rowCount == 1) {
-        db.dbConnect().query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2', [commentid, authorid], (error, result) => {
+        db.clientPool.query('DELETE FROM upvotes WHERE commentid = $1 AND upvoterid = $2', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
@@ -324,12 +324,12 @@ const downVoteComment = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
+    db.clientPool.query('UPDATE comments SET upvotes = upvotes - 1 WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
       else if (result.rowCount == 1) {
-        db.dbConnect().query('INSERT INTO downvotes (commentid, downvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
+        db.clientPool.query('INSERT INTO downvotes (commentid, downvoterid) VALUES ($1, $2)', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
@@ -352,12 +352,12 @@ const unDownVoteComment = async (request, response) => {
 
   try {
     jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-    db.dbConnect().query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
+    db.clientPool.query('UPDATE comments SET upvotes = upvotes + 1 WHERE commentid = $1', [commentid], (error, result) => {
       if (error) {
         response.send(error.message)
       }
       else if (result.rowCount == 1) {
-        db.dbConnect().query('DELETE FROM downvotes WHERE commentid = $1 AND downvoterid = $2', [commentid, authorid], (error, result) => {
+        db.clientPool.query('DELETE FROM downvotes WHERE commentid = $1 AND downvoterid = $2', [commentid, authorid], (error, result) => {
           if (error) {
             response.send(error.message)
           }

@@ -7,7 +7,7 @@ dotenv.config()
 const viewCommentDisputes = async (request, response) => {
     const commentid = request.params.commentid
     try {
-      db.dbConnect().query('SELECT * FROM disputes WHERE commentid = $1', [commentid], (error, result) => {
+      db.clientPool.query('SELECT * FROM disputes WHERE commentid = $1', [commentid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
@@ -31,20 +31,20 @@ const viewCommentDisputes = async (request, response) => {
         const result = jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'})
         const userid = result.userid  
         const authorname = result.username
-        db.dbConnect().query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
+        db.clientPool.query('SELECT profilepic FROM users WHERE userid = $1', [userid], (error, result) => {
           if (error) {
             response.send(error.message)
           }
           else if(result.rowCount == 1){
             const picture = result.rows[0].profilepic
-            db.dbConnect().query('INSERT INTO disputes (commentid, authorid, authorname, authorpicurl, content, postedtime) VALUES ($1, $2, $3, $4, $5, now())', 
+            db.clientPool.query('INSERT INTO disputes (commentid, authorid, authorname, authorpicurl, content, postedtime) VALUES ($1, $2, $3, $4, $5, now())', 
             [commentid, userid, authorname, picture, content], 
             (error, result) => {
             if (error) {
               response.send(error.message)
             }
             else {
-              db.dbConnect().query(
+              db.clientPool.query(
                 'UPDATE comments SET disputed = TRUE WHERE commentid = $1',
                 [commentid],
                 (error, result) => {
@@ -78,7 +78,7 @@ const updateDispute = async(request, response) => {
   
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, {algorithm: 'HS256'}) 
-      db.dbConnect().query(
+      db.clientPool.query(
         'UPDATE disputes SET content = $1, edited = TRUE, editedtime = now() WHERE disputeid = $2',
         [content, disputeid],
         (error, result) => {
@@ -104,17 +104,17 @@ const updateDispute = async(request, response) => {
     const disputeid = request.params.disputeid
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('DELETE FROM disputes WHERE disputeid = $1', [disputeid], (error, result) => {
+      db.clientPool.query('DELETE FROM disputes WHERE disputeid = $1', [disputeid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
         else if(result.rowCount == 1){
-          db.dbConnect().query('SELECT * FROM disputes WHERE commentid = $1', [commentid], (error, result) => {
+          db.clientPool.query('SELECT * FROM disputes WHERE commentid = $1', [commentid], (error, result) => {
             if (error) {
               response.send(error.message)
             }
             else if (result.rowCount == 0) {
-              db.dbConnect().query(
+              db.clientPool.query(
                 'UPDATE comments SET disputed = FALSE WHERE commentid = $1',
                 [commentid],
                 (error, result) => {
@@ -154,17 +154,17 @@ const updateDispute = async(request, response) => {
 
     try {
       jwt.verify(jwt_auth, process.env.SECRETKEY, { algorithm: 'HS256' })
-      db.dbConnect().query('UPDATE disputes SET disputeapproved = TRUE WHERE disputeid = $1', [disputeid], (error, result) => {
+      db.clientPool.query('UPDATE disputes SET disputeapproved = TRUE WHERE disputeid = $1', [disputeid], (error, result) => {
         if (error) {
           response.send(error.message)
         }
         else if(result.rowCount == 1){
-          db.dbConnect().query('UPDATE comments SET idreplaced = TRUE, disputed = FALSE WHERE commentid = $1', [commentid], (error, result) => {
+          db.clientPool.query('UPDATE comments SET idreplaced = TRUE, disputed = FALSE WHERE commentid = $1', [commentid], (error, result) => {
             if (error) {
               response.send(error.message)
             }
             else if(result.rowCount == 1) {
-              db.dbConnect().query('UPDATE posts SET verified = FALSE WHERE postid = $1', [postid], (error, result) => {
+              db.clientPool.query('UPDATE posts SET verified = FALSE WHERE postid = $1', [postid], (error, result) => {
                 if (error) {
                   response.send(error.message)
                 }
